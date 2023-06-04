@@ -2,11 +2,11 @@
   "name": "planodezoo",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
   "scripts": {
     "build": "tsc",
-    "start": "node dist/index.js",
-    "sb": "tsc && node dist/index.js"
+    "start": "node dist/app.js",
+    "sb": "tsc && node dist/app.js",
+    "dev": "ts-node-dev --respawn --transpile-only ./src/app.ts"
   },
   "repository": {
     "type": "git",
