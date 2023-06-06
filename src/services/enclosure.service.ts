@@ -15,14 +15,13 @@ export class EnclosureService {
             const createdEnclosure = await this.enclosureModel.create({
                 name: enclosure.name,
                 description: enclosure.description,
-                imageUrl: enclosure.imageUrl,
+                image: enclosure.image,
                 type: enclosure.type,
                 capacity: enclosure.capacity,
-                actualCapacity: enclosure.actualCapacity,
                 openingHours: enclosure.openingHours,
-                // closingHours: enclosure.closingHours,
                 duration: enclosure.duration,
-                maintenance: enclosure.maintenance,
+                status: enclosure.status,
+                bestMaintenanceMonth: enclosure.bestMaintenanceMonth,
                 handicapAccessible: enclosure.handicapAccessible
             });
             return createdEnclosure;
@@ -30,4 +29,22 @@ export class EnclosureService {
             return null;
         }
     }
+
+    async getAllEnclosures(): Promise<Enclosure[]> {
+        try {
+            const enclosures = await this.enclosureModel.find();
+            return enclosures;
+        } catch (error: unknown) {
+            return [];
+        }
+    }
+
+    // async getEnclosureByName(enclosure: Enclosure): Promise<Enclosure | null> {
+    //     try {
+    //         const req = await this.enclosureModel.findOne({name : enclosure.name});
+    //         return req;
+    //     } catch (error: unknown) {
+    //         return null;
+    //     }
+    // }
 }

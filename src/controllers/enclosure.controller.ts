@@ -19,14 +19,13 @@ export class EnclosureController implements ExpressController {
             const enclosure = await this.enclosureService.createEnclosure({
                 name: req.body.name,
                 description: req.body.description,
-                imageUrl: req.body.imageUrl,
+                image: req.body.image,
                 type: req.body.type,
                 capacity: req.body.capacity,
-                actualCapacity: req.body.actualCapacity,
                 openingHours: req.body.openingHours,
-                // closingHours: req.body.closingHours,
                 duration: req.body.duration,
-                maintenance: req.body.maintenance,
+                status: req.body.status,
+                bestMaintenanceMonth: req.body.bestMaintenanceMonth,
                 handicapAccessible: req.body.handicapAccessible
             });
             if(enclosure) {
@@ -38,7 +37,8 @@ export class EnclosureController implements ExpressController {
     }
 
     async getAll(req: Request, res: Response): Promise<void> {
-        res.send("Get all enclosures " + this.path);
+        const enclosures = await this.enclosureService.getAllEnclosures();
+        res.json(enclosures);
     }
 
     buildRoutes(): Router {
