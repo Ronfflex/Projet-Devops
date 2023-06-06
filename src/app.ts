@@ -5,8 +5,10 @@ config({
 
 import * as express from 'express';
 import { connect } from 'mongoose';
+import { EnclosureController, ExpressController } from "./controllers";
 
 async function launchAPI(): Promise<void> {
+  console.log("Connecting to database...");
   await connect(process.env.MONGO_URI as string, {
       auth: {
           username: process.env.MONGO_USER,
@@ -15,7 +17,17 @@ async function launchAPI(): Promise<void> {
       authSource: "admin",
   });
 
+
   const app = express();
+  
+  const controllers: ExpressController[] = [
+      new EnclosureController(),
+  ];
+  for (let controller of controllers) {
+    const router = controller.buildRoutes();
+    app.use(controller.path, router);
+  }
+
 
   app.listen(process.env.PORT, function() {
       console.log(`API Listening on port ${process.env.PORT}...`);
