@@ -39,12 +39,12 @@ export class EnclosureService {
         }
     }
 
-    // async getEnclosureByName(enclosure: Enclosure): Promise<Enclosure | null> {
-    //     try {
-    //         const req = await this.enclosureModel.findOne({name : enclosure.name});
-    //         return req;
-    //     } catch (error: unknown) {
-    //         return null;
-    //     }
-    // }
+    async getEnclosureByName(name : string): Promise<Enclosure | null> {
+        try {
+            const req = await this.enclosureModel.findOne({ name });
+            return req;
+        } catch (error: unknown) {
+            return null;
+        }
+    }
 }
