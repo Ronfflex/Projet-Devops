@@ -3,6 +3,7 @@ import { Request, Response, Router } from "express";
 import * as express from "express";
 import { EnclosureService } from "../services";
 import { ExpressUtils } from "../utils";
+import { validateUpdateByNameRequest } from "../middlewares";
 
 export class EnclosureController implements ExpressController {
 
@@ -99,12 +100,51 @@ export class EnclosureController implements ExpressController {
     }
 
 
+    /** [PATCH] **/
+    /* Update enclosure by name */
+    async updateByName(req: Request, res: Response): Promise<void> {
+        const name = req.params.name.trim().toLowerCase();
+    
+        const {
+            description,
+            image,
+            type,
+            capacity,
+            openingHours,
+            duration,
+            status,
+            bestMaintenanceMonth,
+            handicapAccessible
+        } = req.body;
+    
+        const updatedEnclosure = await this.enclosureService.updateEnclosureByName(name, {
+            description,
+            image,
+            type,
+            capacity,
+            openingHours,
+            duration,
+            status,
+            bestMaintenanceMonth,
+            handicapAccessible
+        });
+    
+        if (!updatedEnclosure) {
+            return ExpressUtils.notFound(res);
+        }
+    
+        res.json(updatedEnclosure);
+    }    
+
+
+
     /* Router */
     buildRoutes(): Router {
         const router = express.Router();
         router.get('/', this.getAll.bind(this));
-        router.get('/getByName', this.getByName.bind(this));
+        router.get('/id', this.getByName.bind(this));
         router.post('/create', express.json(), this.create.bind(this));
+        router.patch('/:name', express.json(), validateUpdateByNameRequest, this.updateByName.bind(this));
         return router;
     }
 }

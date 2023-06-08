@@ -47,4 +47,13 @@ export class EnclosureService {
             return null;
         }
     }
+
+    async updateEnclosureByName(name: string, updateData: Partial<Enclosure>): Promise<Enclosure | null> {
+        try {
+            const updatedEnclosure = await this.enclosureModel.findOneAndUpdate({ name }, updateData, { new: true });
+            return updatedEnclosure;
+        } catch (error: unknown) {
+            return null;
+        }
+    }
 }

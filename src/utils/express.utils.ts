@@ -5,39 +5,44 @@ export class ExpressUtils {
     static isValid(res: Response, value: unknown, type: string, min?: number, max?: number): boolean {
         switch(type) {
             case 'string':
-                return this.isString(res, value, min, max, type);
+                return this.isString(res, value, min, max);
             case 'number':
-                return this.isNumber(res, value, min, max, type);
+                return this.isNumber(res, value, min, max);
             case 'boolean':
-                if(typeof value === 'boolean') return true;
-                return this.badRequest(res, `Expected a boolean but received a ${typeof value}`);
+                return typeof value === 'boolean' || this.badRequest(res);
             default:
-                return this.badRequest(res, `Invalid type: ${type}`);
+                return this.badRequest(res);
         }
     }
 
-    static isString(res: Response, value: unknown, minLength?: number, maxLength?: number, field?: string): boolean {
+    static isString(res: Response, value: unknown, minLength?: number, maxLength?: number): boolean {
         if(typeof value !== 'string') {
-            return this.badRequest(res, `Expected ${field} to be a string but received a ${typeof value}`);
+            this.badRequest(res);
+            return false;
         }
         if(minLength !== undefined && value.length < minLength) {
-            return this.badRequest(res, `${field} should be at least ${minLength} characters long`);
+            this.badRequest(res);
+            return false;
         }
         if(maxLength !== undefined && value.length > maxLength) {
-            return this.badRequest(res, `${field} should be no more than ${maxLength} characters long`);
+            this.badRequest(res);
+            return false;
         }
         return true;
     }
 
-    static isNumber(res: Response, value: unknown, min?: number, max?: number, field?: string): boolean {
+    static isNumber(res: Response, value: unknown, min?: number, max?: number): boolean {
         if(typeof value !== 'number') {
-            return this.badRequest(res, `Expected ${field} to be a number but received a ${typeof value}`);
+            this.badRequest(res);
+            return false;
         }
         if(min !== undefined && value < min) {
-            return this.badRequest(res, `${field} should be at least ${min}`);
+            this.badRequest(res);
+            return false;
         }
         if(max !== undefined && value > max) {
-            return this.badRequest(res, `${field} should be no more than ${max}`);
+            this.badRequest(res);
+            return false;
         }
         return true;
     }
@@ -48,8 +53,8 @@ export class ExpressUtils {
     }
     
 
-    static badRequest(res: Response, message = 'Bad Request') {
-        res.status(400).json({ error: message }).end();
+    static badRequest(res: Response) {
+        res.status(400).end();
         return false;
     }
 
