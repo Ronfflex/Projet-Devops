@@ -3,7 +3,7 @@ import { Request, Response, Router } from "express";
 import * as express from "express";
 import { EnclosureService } from "../services";
 import { ExpressUtils } from "../utils";
-import { validateUpdateByNameRequest } from "../middlewares";
+import { validateCreateRequest, validateUpdateByNameRequest } from "../middlewares";
 
 export class EnclosureController implements ExpressController {
 
@@ -38,35 +38,20 @@ export class EnclosureController implements ExpressController {
         const trimmedType = type.trim().toLowerCase();
         const trimmedOpeningHours = openingHours.trim();
     
-        if (
-            ExpressUtils.isValid(res, trimmedName, 'string', 2, 50) && 
-            ExpressUtils.isValid(res, trimmedDescription, 'string', 0, 500) &&
-            ExpressUtils.isImageUrlOrPath(trimmedImage) &&
-            ExpressUtils.isValid(res, trimmedType, 'string', 2, 30) &&
-            ExpressUtils.isValid(res, capacity, 'number', 1, 10000) &&
-            ExpressUtils.isValid(res, trimmedOpeningHours, 'string', 11, 11) &&
-            ExpressUtils.isValid(res, duration, 'number', 0, 1440) && 
-            ExpressUtils.isValid(res, status, 'boolean') &&
-            ExpressUtils.isValid(res, bestMaintenanceMonth, 'number', 1, 12) &&
-            ExpressUtils.isValid(res, handicapAccessible, 'boolean')
-        ) {
-            const enclosure = await this.enclosureService.createEnclosure({
-                name: trimmedName,
-                description: trimmedDescription,
-                image: trimmedImage,
-                type: trimmedType,
-                capacity,
-                openingHours: trimmedOpeningHours,
-                duration,
-                status,
-                bestMaintenanceMonth,
-                handicapAccessible
-            });
+        const enclosure = await this.enclosureService.createEnclosure({
+            name: trimmedName,
+            description: trimmedDescription,
+            image: trimmedImage,
+            type: trimmedType,
+            capacity,
+            openingHours: trimmedOpeningHours,
+            duration,
+            status,
+            bestMaintenanceMonth,
+            handicapAccessible
+        });
     
-            enclosure ? res.json(enclosure) : ExpressUtils.conflict(res);
-        } else {
-            ExpressUtils.badRequest(res);
-        }
+        enclosure ? res.json(enclosure) : ExpressUtils.conflict(res);
     }
     
 
@@ -134,7 +119,7 @@ export class EnclosureController implements ExpressController {
         }
     
         res.json(updatedEnclosure);
-    }    
+    }
 
 
 
@@ -143,7 +128,7 @@ export class EnclosureController implements ExpressController {
         const router = express.Router();
         router.get('/', this.getAll.bind(this));
         router.get('/id', this.getByName.bind(this));
-        router.post('/create', express.json(), this.create.bind(this));
+        router.post('/create', express.json(), validateCreateRequest, this.create.bind(this));
         router.patch('/:name', express.json(), validateUpdateByNameRequest, this.updateByName.bind(this));
         return router;
     }
