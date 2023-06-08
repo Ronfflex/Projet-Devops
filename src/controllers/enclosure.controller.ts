@@ -60,6 +60,7 @@ export class EnclosureController implements ExpressController {
     async getAll(req: Request, res: Response): Promise<void> {
         try {
             const enclosures = await this.enclosureService.getAllEnclosures();
+
             res.json(enclosures);
         } catch (error: unknown) {
             ExpressUtils.conflict(res);
@@ -78,6 +79,7 @@ export class EnclosureController implements ExpressController {
             if(!enclosure) {
                 return ExpressUtils.notFound(res);
             }
+
             res.json(enclosure);
         } catch (error: unknown) {
             ExpressUtils.conflict(res);
@@ -121,6 +123,40 @@ export class EnclosureController implements ExpressController {
         res.json(updatedEnclosure);
     }
 
+    /* Set maintenance by name */
+    async setMaintenance(req: Request, res: Response): Promise<void> {
+        const name = req.params.name.trim().toLowerCase();
+        const { status } = req.body;
+
+        if (!ExpressUtils.isValid(res, name, 'string', 2, 50)) {
+            return;
+        }
+
+        if (!ExpressUtils.isValid(res, status, 'boolean')) {
+            return;
+        }
+
+        const updatedEnclosure = await this.enclosureService.setMaintenance(name, status);
+        updatedEnclosure ? res.json(updatedEnclosure) : ExpressUtils.notFound(res);
+    }
+
+
+    /** [DELETE] **/
+    /* Delete enclosure by name */
+    async deleteByName(req: Request, res: Response): Promise<void> {
+        const name = req.params.name.trim().toLowerCase();
+        if (!ExpressUtils.isValid(res, name, 'string', 2, 50)) {
+            return;
+        }
+        
+        const deletedEnclosure = await this.enclosureService.deleteEnclosureByName(name);
+        if (!deletedEnclosure) {
+            return ExpressUtils.notFound(res);
+        }
+
+        res.status(204).end();
+    }
+
 
 
     /* Router */
@@ -130,6 +166,8 @@ export class EnclosureController implements ExpressController {
         router.get('/id', this.getByName.bind(this));
         router.post('/create', express.json(), validateCreateRequest, this.create.bind(this));
         router.patch('/:name', express.json(), validateUpdateByNameRequest, this.updateByName.bind(this));
+        router.patch('/:name/maintenance', express.json(), this.setMaintenance.bind(this));
+        router.delete('/:name', this.deleteByName.bind(this));
         return router;
     }
 }

@@ -30,12 +30,12 @@ export class EnclosureService {
         }
     }
 
-    async getAllEnclosures(): Promise<Enclosure[]> {
+    async getAllEnclosures(): Promise<Enclosure[] | null> {
         try {
             const enclosures = await this.enclosureModel.find();
             return enclosures;
         } catch (error: unknown) {
-            return [];
+            return null;
         }
     }
 
@@ -52,6 +52,24 @@ export class EnclosureService {
         try {
             const updatedEnclosure = await this.enclosureModel.findOneAndUpdate({ name }, updateData, { new: true });
             return updatedEnclosure;
+        } catch (error: unknown) {
+            return null;
+        }
+    }
+
+    async setMaintenance(name: string, status: boolean): Promise<Enclosure | null> {
+        try {
+            const updatedEnclosure = await this.enclosureModel.findOneAndUpdate({ name }, { status }, { new: true });
+            return updatedEnclosure;
+        } catch (error: unknown) {
+            return null;
+        }
+    }
+
+    async deleteEnclosureByName(name: string): Promise<Enclosure | null> {
+        try{
+            const deletedEnclosure = await this.enclosureModel.findOneAndDelete({ name });
+            return deletedEnclosure;
         } catch (error: unknown) {
             return null;
         }

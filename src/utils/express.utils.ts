@@ -51,8 +51,13 @@ export class ExpressUtils {
         return value.match(/^((http(s?):)([/|.|\w|\s|-])*\.(?:jpg|gif|png))|(([/|.|\w|\s|-])*\.(?:jpg|gif|png))$/
         ) !== null;
     }
-    
 
+    /* 2xx Success */
+    static noContent(res: Response) {
+        res.status(204).end();
+    }
+    
+    /* 4xx Client errors */
     static badRequest(res: Response) {
         res.status(400).end();
         return false;
