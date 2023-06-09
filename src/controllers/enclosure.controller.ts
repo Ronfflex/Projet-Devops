@@ -69,20 +69,25 @@ export class EnclosureController implements ExpressController {
 
     /* Get enclosure by name */
     async getByName(req: Request, res: Response): Promise<void> {
-        const name = req.query.name as string;
-        if (!ExpressUtils.isValid(res, name, 'string')) {
-            return;
-        }
+        if (typeof req.query.name === 'string') {
+            const name = req.query.name.trim().toLowerCase();
 
-        try {
-            const enclosure = await this.enclosureService.getEnclosureByName(name);
-            if(!enclosure) {
-                return ExpressUtils.notFound(res);
+            if (!ExpressUtils.isValid(res, name, 'string', 2, 50)) {
+                return;
             }
-
-            res.json(enclosure);
-        } catch (error: unknown) {
-            ExpressUtils.conflict(res);
+    
+            try {
+                const enclosure = await this.enclosureService.getEnclosureByName(name);
+                if(!enclosure) {
+                    return ExpressUtils.notFound(res);
+                }
+    
+                res.json(enclosure);
+            } catch (error: unknown) {
+                ExpressUtils.conflict(res);
+            }
+        } else {
+            ExpressUtils.badRequest(res);
         }
     }
 
