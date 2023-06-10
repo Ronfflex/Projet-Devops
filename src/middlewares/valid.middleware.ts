@@ -64,16 +64,62 @@ export function validateCreateRequest(req: Request, res: Response, next: NextFun
     const trimmedOpeningHours = openingHours ? openingHours.trim() : undefined;
 
     if (
-        trimmedName && ExpressUtils.isValid(res, trimmedName, 'string', 2, 50) && 
-        trimmedDescription && ExpressUtils.isValid(res, trimmedDescription, 'string', 0, 500) &&
-        trimmedImage && ExpressUtils.isImageUrlOrPath(trimmedImage) &&
-        trimmedType && ExpressUtils.isValid(res, trimmedType, 'string', 2, 30) &&
+        ExpressUtils.isValid(res, trimmedName, 'string', 2, 50) && 
+        ExpressUtils.isValid(res, trimmedDescription, 'string', 0, 500) &&
+        ExpressUtils.isImageUrlOrPath(trimmedImage) &&
+        ExpressUtils.isValid(res, trimmedType, 'string', 2, 30) &&
         capacity && ExpressUtils.isValid(res, capacity, 'number', 1, 10000) &&
-        trimmedOpeningHours && ExpressUtils.isValid(res, trimmedOpeningHours, 'string', 11, 11) &&
+        ExpressUtils.isValid(res, trimmedOpeningHours, 'string', 11, 11) &&
         duration && ExpressUtils.isValid(res, duration, 'number', 0, 1440) && 
         status !== undefined && ExpressUtils.isValid(res, status, 'boolean') &&
         handicapAccessible !== undefined && ExpressUtils.isValid(res, handicapAccessible, 'boolean') &&
         (!bestMaintenanceMonth || ExpressUtils.isValid(res, bestMaintenanceMonth, 'number', 1, 12))
+    ) {
+        next();
+    } else {
+        ExpressUtils.badRequest(res);
+    }
+}
+
+export function validateCreateUser(req: Request, res: Response, next: NextFunction): void {
+    const {
+        login,
+        password,
+        role,
+        active
+    } = req.body;
+
+    // Trim and lowercase some values and check if they are valid
+    const trimmedLogin = login ? login.trim().toLowerCase() : undefined;
+    const trimmedPassword = password ? password.trim() : undefined;
+    const trimmedRole = role ? role.trim().toLowerCase() : undefined;
+    const isDeclaredActive = active !== undefined ? active : true; // default: true if not declared
+
+    if (
+        ExpressUtils.isValid(res, trimmedLogin, 'string', 4, 30) && 
+        ExpressUtils.isValid(res, trimmedPassword, 'string', 8) &&
+        trimmedRole && ExpressUtils.isValid(res, trimmedRole, 'string', 2, 30) &&
+        ExpressUtils.isValid(res, isDeclaredActive, 'boolean')
+    ) {
+        next();
+    } else {
+        ExpressUtils.badRequest(res);
+    }
+}
+
+export function validateLoginUser(req: Request, res: Response, next: NextFunction): void {
+    const {
+        login,
+        password
+    } = req.body;
+
+    // Trim and lowercase some values and check if they are valid
+    const trimmedLogin = login ? login.trim().toLowerCase() : undefined;
+    const trimmedPassword = password ? password.trim() : undefined;
+
+    if (
+        ExpressUtils.isValid(res, trimmedLogin, 'string', 4, 30) && 
+        ExpressUtils.isValid(res, trimmedPassword, 'string', 8)
     ) {
         next();
     } else {

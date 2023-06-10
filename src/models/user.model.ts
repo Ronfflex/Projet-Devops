@@ -1,14 +1,12 @@
-import mongoose, {Model, Schema} from "mongoose";
+import mongoose, { Document, Model, Schema } from 'mongoose';
+import { UserCredentials } from './userCredentials.model';
 
-export interface User {
-    _id?: string;
-    login: string; // unique
-    password: string; // hashed
-    role: string; // default: "user"
-    active: boolean; // default: true
+export interface User extends UserCredentials, Document {
+    role: string;
+    active: boolean;
 }
 
-const userSchema = new Schema<User>({
+const userSchema: Schema = new Schema<User>({
     login: {type: Schema.Types.String, unique: true, required: true},
     password: {type: Schema.Types.String, required: true},
     role: {type: Schema.Types.String, required: true, default: "user"},
@@ -18,4 +16,4 @@ const userSchema = new Schema<User>({
     versionKey: false
 });
 
-export const UserModel: Model<User> = mongoose.model("User", userSchema);
+export const UserModel: Model<User> = mongoose.model<User>('User', userSchema);

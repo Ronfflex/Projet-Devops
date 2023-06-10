@@ -57,35 +57,22 @@ export class EnclosureController implements ExpressController {
 
     /** [GET] **/
     /* Get all enclosures */
-    async getAll(req: Request, res: Response): Promise<void> {
-        try {
-            const enclosures = await this.enclosureService.getAllEnclosures();
-
-            res.json(enclosures);
-        } catch (error: unknown) {
-            ExpressUtils.conflict(res);
-        }
+    async getAll(req: Request, res: Response): Promise<void> {    
+        const enclosures = await this.enclosureService.getAllEnclosures();
+        enclosures ? res.json(enclosures) : ExpressUtils.notFound(res);
     }
 
     /* Get enclosure by name */
     async getByName(req: Request, res: Response): Promise<void> {
         if (typeof req.query.name === 'string') {
             const name = req.query.name.trim().toLowerCase();
-
+    
             if (!ExpressUtils.isValid(res, name, 'string', 2, 50)) {
                 return;
             }
     
-            try {
-                const enclosure = await this.enclosureService.getEnclosureByName(name);
-                if(!enclosure) {
-                    return ExpressUtils.notFound(res);
-                }
-    
-                res.json(enclosure);
-            } catch (error: unknown) {
-                ExpressUtils.conflict(res);
-            }
+            const enclosure = await this.enclosureService.getEnclosureByName(name);
+            enclosure ? res.json(enclosure) : ExpressUtils.notFound(res);
         } else {
             ExpressUtils.badRequest(res);
         }
@@ -121,11 +108,7 @@ export class EnclosureController implements ExpressController {
             handicapAccessible
         });
     
-        if (!updatedEnclosure) {
-            return ExpressUtils.notFound(res);
-        }
-    
-        res.json(updatedEnclosure);
+        updatedEnclosure ? res.json(updatedEnclosure) : ExpressUtils.notFound(res);
     }
 
     /* Set maintenance by name */
