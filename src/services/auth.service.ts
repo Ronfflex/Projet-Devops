@@ -78,4 +78,17 @@ export class AuthService {
             return null;
         }
     }
+
+    async updateEmployee(login: string, updateData: Partial<User>): Promise<User | null> {
+        try {
+            if (updateData.password) {
+                updateData.password = SecurityUtils.toSHA512(updateData.password);
+            }
+            
+            const updatedEmployee = await this.userModel.findOneAndUpdate({ login }, updateData, { new: true });
+            return updatedEmployee;
+        } catch (error: unknown) {
+            return null;
+        }
+    }
 }

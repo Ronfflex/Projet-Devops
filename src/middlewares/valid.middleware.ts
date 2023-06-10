@@ -1,9 +1,10 @@
 import { Request, Response, NextFunction } from "express";
 import { ExpressUtils } from "../utils";
 
+/* Enclosures */
 export function validateUpdateByNameRequest(req: Request, res: Response, next: NextFunction): void {
     const name = req.params.name.trim().toLowerCase();
-    if (!ExpressUtils.isValid(res, name, 'string')) {
+    if (!ExpressUtils.isValid(res, name, 'string', 2, 50)) {
         return;
     }
 
@@ -81,6 +82,7 @@ export function validateCreateRequest(req: Request, res: Response, next: NextFun
     }
 }
 
+/* Users */
 export function validateCreateUser(req: Request, res: Response, next: NextFunction): void {
     const {
         login,
@@ -120,6 +122,34 @@ export function validateLoginUser(req: Request, res: Response, next: NextFunctio
     if (
         ExpressUtils.isValid(res, trimmedLogin, 'string', 4, 30) && 
         ExpressUtils.isValid(res, trimmedPassword, 'string', 8)
+    ) {
+        next();
+    } else {
+        ExpressUtils.badRequest(res);
+    }
+}
+
+export function validateUpdateUser(req: Request, res: Response, next: NextFunction): void {
+    const login = req.params.login.trim().toLowerCase();
+    if (!ExpressUtils.isValid(res, login, 'string', 4, 30)) {
+        return;
+    }
+
+    const {
+        password,
+        role,
+        active
+    } = req.body;
+
+    // Trim and lowercase some values and check if they are valid
+    const trimmedPassword = password ? password.trim() : undefined;
+    const trimmedRole = role ? role.trim().toLowerCase() : undefined;
+    const isDeclaredActive = active !== undefined ? active : true; // default: true if not declared
+
+    if (
+        (!password || (trimmedPassword && ExpressUtils.isValid(res, trimmedPassword, 'string', 8))) &&
+        (!role || (trimmedRole && ExpressUtils.isValid(res, trimmedRole, 'string', 2, 30))) &&
+        (!active || ExpressUtils.isValid(res, isDeclaredActive, 'boolean'))
     ) {
         next();
     } else {

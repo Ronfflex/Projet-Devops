@@ -3,7 +3,7 @@ import {Request, Response, Router} from 'express';
 import * as express from "express";
 import {AuthService} from "../services";
 import {ExpressUtils} from "../utils";
-import {checkAuthToken, validateCreateUser} from "../middlewares";
+import {checkAuthToken, validateCreateUser, validateUpdateUser} from "../middlewares";
 import { User } from "../models";
  
 export class UserController implements ExpressController {
@@ -89,7 +89,25 @@ export class UserController implements ExpressController {
     }
 
 
-    /** [PUT] **/
+    /** [PATCH] **/
+    /* Update an employee */
+    async updateByLogin(req: Request, res: Response): Promise<void> {
+        const trimmedLogin = req.params.login.trim().toLowerCase();
+        
+        const {
+            password,
+            role,
+            active
+        } = req.body;
+    
+        const updatedEmployee = await this.authService.updateEmployee(trimmedLogin, {
+            password,
+            role,
+            active
+            });
+    
+        updatedEmployee ? res.json(updatedEmployee) : ExpressUtils.notFound(res);
+    }
 
 
     buildRoutes(): Router {
@@ -99,6 +117,7 @@ export class UserController implements ExpressController {
         router.post('/logout', checkAuthToken(), this.logout.bind(this));
         router.get('/me', checkAuthToken(), this.me.bind(this));
         router.get('/employees', checkAuthToken(), this.employees.bind(this));
+        router.patch('/employees/:login', express.json(), checkAuthToken(), validateUpdateUser, this.updateByLogin.bind(this));
         return router;
     }
 
