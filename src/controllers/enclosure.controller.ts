@@ -138,11 +138,7 @@ export class EnclosureController implements ExpressController {
         }
         
         const deletedEnclosure = await this.enclosureService.deleteEnclosureByName(name);
-        if (!deletedEnclosure) {
-            return ExpressUtils.notFound(res);
-        }
-
-        res.status(204).end();
+        deletedEnclosure ? ExpressUtils.noContent(res) : ExpressUtils.notFound(res);
     }
 
 

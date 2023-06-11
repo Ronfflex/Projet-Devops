@@ -91,4 +91,22 @@ export class AuthService {
             return null;
         }
     }
+
+    async deleteUserByLogin(login: string): Promise<boolean | null> {
+        try {
+            const user = await this.userModel.findOne({ login });
+            if (!user) {
+                return false;
+            }
+    
+            // End all sessions of the user
+            await this.sessionModel.deleteMany({ user: user._id });
+    
+            // Delete the user
+            const deletedUser = await this.userModel.findOneAndDelete({ login });
+            return deletedUser ? true : false;
+        } catch (error: unknown) {
+            return null;
+        }
+    }
 }

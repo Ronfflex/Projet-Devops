@@ -66,10 +66,10 @@ export class EnclosureService {
         }
     }
 
-    async deleteEnclosureByName(name: string): Promise<Enclosure | null> {
+    async deleteEnclosureByName(name: string): Promise<boolean | null> {
         try{
             const deletedEnclosure = await this.enclosureModel.findOneAndDelete({ name });
-            return deletedEnclosure;
+            return deletedEnclosure ? true : false;
         } catch (error: unknown) {
             return null;
         }

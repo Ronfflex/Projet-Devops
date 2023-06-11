@@ -110,14 +110,28 @@ export class UserController implements ExpressController {
     }
 
 
+    /** [DELETE] **/
+    /* Delete an employee */
+    async deleteByLogin(req: Request, res: Response): Promise<void> {
+        const login = req.params.login.trim().toLowerCase();
+        if (!ExpressUtils.isValid(res, login, 'string', 4, 30)) {
+            return;
+        }
+
+        const deletedUser = await this.authService.deleteUserByLogin(login);
+        deletedUser ? ExpressUtils.noContent(res) : ExpressUtils.notFound(res);
+    }
+
+
     buildRoutes(): Router {
         const router = express.Router();
+        router.get('/me', checkAuthToken(), this.me.bind(this));
+        router.get('/employees', checkAuthToken(), this.employees.bind(this));
         router.post('/subscribe', express.json(), validateCreateUser, this.subscribe.bind(this));
         router.post('/login', express.json(), this.login.bind(this));
         router.post('/logout', checkAuthToken(), this.logout.bind(this));
-        router.get('/me', checkAuthToken(), this.me.bind(this));
-        router.get('/employees', checkAuthToken(), this.employees.bind(this));
         router.patch('/employees/:login', express.json(), checkAuthToken(), validateUpdateUser, this.updateByLogin.bind(this));
+        router.delete('/employees/:login', checkAuthToken(), this.deleteByLogin.bind(this));
         return router;
     }
 
