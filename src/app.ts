@@ -5,7 +5,7 @@ config({
 
 import * as express from 'express';
 import { connect } from 'mongoose';
-import { EnclosureController, ExpressController, UserController } from "./controllers";
+import { EnclosureController, ExpressController, UserController, MaintenanceController } from "./controllers";
 
 async function launchAPI(): Promise<void> {
   console.log("Connecting to database...");
@@ -21,8 +21,9 @@ async function launchAPI(): Promise<void> {
   const app = express();
   
   const controllers: ExpressController[] = [
-      new EnclosureController(),
-      new UserController()
+    new EnclosureController(),
+    new UserController(),
+    new MaintenanceController()
   ];
   for (let controller of controllers) {
     const router = controller.buildRoutes();
