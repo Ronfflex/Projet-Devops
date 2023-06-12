@@ -97,6 +97,11 @@ export class UserController implements ExpressController {
         employees ? res.json(employees) : ExpressUtils.notFound(res);
     }
 
+    async employeesSchedule(req: Request, res: Response): Promise<void> {
+        const employees = await this.authService.getAllEmployeesSchledule();
+        employees ? res.json(employees) : ExpressUtils.notFound(res);
+    }
+
 
     /** [PATCH] **/
     /* Update an employee */
@@ -138,6 +143,7 @@ export class UserController implements ExpressController {
         const router = express.Router();
         router.get('/me', checkAuthToken(), this.me.bind(this));
         router.get('/employees', checkAuthToken(), this.employees.bind(this));
+        router.get('/employees/schledule', checkAuthToken(), this.employeesSchedule.bind(this));
         router.post('/subscribe', express.json(), validateCreateUser, this.subscribe.bind(this));
         router.post('/login', express.json(), this.login.bind(this));
         router.post('/logout', checkAuthToken(), this.logout.bind(this));

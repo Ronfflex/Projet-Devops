@@ -80,6 +80,15 @@ export class AuthService {
         }
     }
 
+    async getAllEmployeesSchledule(): Promise<User[] | null> {
+        try {
+            const employees = await this.userModel.find({}, { role: 1, workShift: 1 });
+            return employees;
+        } catch (error: unknown) {
+            return null;
+        }
+    }
+
     async updateEmployee(login: string, updateData: Partial<User>): Promise<User | null> {
         try {
             if (updateData.password) {
