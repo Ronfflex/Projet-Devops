@@ -10,6 +10,8 @@ export class ExpressUtils {
                 return this.isNumber(res, value, min, max);
             case 'boolean':
                 return typeof value === 'boolean' || this.badRequest(res);
+            case 'array':
+                return this.isArrayOfStrings(res, value, min, max);
             default:
                 return this.badRequest(res);
         }
@@ -17,14 +19,17 @@ export class ExpressUtils {
 
     static isString(res: Response, value: unknown, minLength?: number, maxLength?: number): boolean {
         if(typeof value !== 'string') {
+            console.log('string');
             this.badRequest(res);
             return false;
         }
         if(minLength !== undefined && value.length < minLength) {
+            console.log('minLengthString');
             this.badRequest(res);
             return false;
         }
         if(maxLength !== undefined && value.length > maxLength) {
+            console.log('maxLengthString');
             this.badRequest(res);
             return false;
         }
@@ -41,6 +46,25 @@ export class ExpressUtils {
             return false;
         }
         if(max !== undefined && value > max) {
+            this.badRequest(res);
+            return false;
+        }
+        return true;
+    }
+
+    static isArrayOfStrings(res: Response, value: unknown, minLength?: number, maxLength?: number): boolean {
+        if(!Array.isArray(value)) {
+            console.log('array');
+            this.badRequest(res);
+            return false;
+        }
+        if(minLength !== undefined && value.length < minLength) {
+            console.log('minLength');
+            this.badRequest(res);
+            return false;
+        }
+        if(maxLength !== undefined && value.length > maxLength) {
+            console.log('maxLength');
             this.badRequest(res);
             return false;
         }

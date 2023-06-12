@@ -18,7 +18,8 @@ export class AuthService {
                 login: user.login,
                 password: SecurityUtils.toSHA512(user.password),
                 role: user.role,
-                active: user.active
+                active: user.active,
+                workShift: user.workShift
             });
             return createdUser;
         } catch(err: unknown) {

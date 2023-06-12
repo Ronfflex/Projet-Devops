@@ -23,19 +23,28 @@ export class UserController implements ExpressController {
             login,
             password,
             role,
-            active
+            active,
+            workShift
         } = req.body;
 
         // Trim and lowercase
         const trimmedLogin = login.trim().toLowerCase();
         const trimmedPassword = password.trim();
         const trimmedRole = role.trim().toLowerCase();
+        const trimmedWorkShift = workShift.map((shift: {day: string, start: string, end: string}) => {
+            return {
+                day: shift.day.trim().toLowerCase(),
+                start: shift.start.trim(),
+                end: shift.end.trim()
+            }
+        }) as {day: string, start: string, end: string}[];
 
         const user = await this.authService.createUser({
             login: trimmedLogin,
             password: trimmedPassword,
             role: trimmedRole,
-            active
+            active,
+            workShift: trimmedWorkShift
         } as User);
 
         user ? res.json(user) : ExpressUtils.conflict(res);
@@ -97,13 +106,15 @@ export class UserController implements ExpressController {
         const {
             password,
             role,
-            active
+            active,
+            workShift
         } = req.body;
     
         const updatedEmployee = await this.authService.updateEmployee(trimmedLogin, {
             password,
             role,
-            active
+            active,
+            workShift
             });
     
         updatedEmployee ? res.json(updatedEmployee) : ExpressUtils.notFound(res);
