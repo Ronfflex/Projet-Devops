@@ -80,6 +80,10 @@ export class ExpressUtils {
     static noContent(res: Response) {
         res.status(204).end();
     }
+
+    static created(res: Response, data?: unknown) {
+        res.status(201).json(data);
+    }
     
     /* 4xx Client errors */
     static badRequest(res: Response) {

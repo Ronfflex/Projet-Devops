@@ -1,11 +1,13 @@
-import {appendFile, readFile, access} from "fs/promises";
+import {appendFile, readFile, mkdir} from "fs/promises";
 
 
 export class MaintenanceService {
 
     async readMaintenanceByName(enclosure: string): Promise<string | null> {
         try {
-            const filePath = `../files/${enclosure}.txt`;
+            // Replace all spaces in the enclosure name with underscores
+            const enclosureFormatted = enclosure.replace(/\s+/g, '_');
+            const filePath = `src/files/${enclosureFormatted}.txt`;
             const buf = await readFile(filePath);
             const str = buf.toString();
             return str;
@@ -17,13 +19,17 @@ export class MaintenanceService {
     async modifyMaintenanceByName(enclosure: string, comment: string): Promise<string | null> {
         const date = new Date().toISOString();
         const newEntry = `\n\n${date}\n${comment}`;
-        const filePath = `../files/${enclosure}.txt`;
+        // Replace all spaces in the enclosure name with underscores
+        const enclosureFormatted = enclosure.replace(/\s+/g, '_');
+        const filePath = `src/files/${enclosureFormatted}.txt`;
         try {
             await appendFile(filePath, newEntry);
-            return this.readMaintenanceByName(enclosure);
-        } catch (err: unknown) {
+            const result = await this.readMaintenanceByName(enclosureFormatted);
+            return result;
+        } catch (err) {
             return null;
         }
     }
+    
 
 }

@@ -20,12 +20,7 @@ export class MaintenanceController implements ExpressController {
     /** GET **/
     /* Get maintenance by name */
     async getByName(req: Request, res: Response): Promise<void> {
-        if (typeof req.query.name !== 'string') {
-            ExpressUtils.badRequest(res);
-            return;
-        }
-
-        const name = req.query.name.trim().toLowerCase();
+        const name = req.params.name.trim().toLowerCase();
         if (!ExpressUtils.isValid(res, name, 'string', 2, 50)) {
             return;
         }
@@ -43,16 +38,11 @@ export class MaintenanceController implements ExpressController {
     /** POST **/
     /* Modify maintenance by name */
     async modifyByName(req: Request, res: Response): Promise<void> {
-        console.log(req.body);
-        if (typeof req.query.name !== 'string') {
-            ExpressUtils.badRequest(res);
-            return;
-        }
-
-        const name = req.query.name.trim().toLowerCase();
+        const name = req.params.name.trim().toLowerCase();
         if (!ExpressUtils.isValid(res, name, 'string', 2, 50)) {
             return;
         }
+
         // Verify if enclosure exist
         const enclosure = await this.enclosureService.getEnclosureByName(name);
         if (!enclosure) {
@@ -62,13 +52,13 @@ export class MaintenanceController implements ExpressController {
 
         const { comment } = req.body;
         const maintenance = await this.maintenanceService.modifyMaintenanceByName(name, comment);
-        maintenance ? res.json(maintenance) : ExpressUtils.notFound(res);
+        maintenance ? ExpressUtils.created(res) : ExpressUtils.notFound(res);
     }
     
     
     buildRoutes(): Router {
         const router = express.Router();
-        router.get('/:name', checkAuthToken, this.getByName.bind(this));
+        router.get('/:name', this.getByName.bind(this));
         router.post('/:name', express.json(), checkAuthToken, this.modifyByName.bind(this));
         return router;
     }
