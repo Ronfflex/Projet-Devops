@@ -162,23 +162,21 @@ export function validateCreateUser(req: Request, res: Response, next: NextFuncti
     const trimmedLogin = login ? login.trim().toLowerCase() : undefined;
     const trimmedPassword = password ? password.trim() : undefined;
     const trimmedRole = role ? role.trim().toLowerCase() : undefined;
-    
     const isDeclaredActive = active !== undefined ? active : true; // default: true if not declared
-    
-    Object.keys(workShift).forEach(function(key, index) {
-        workShift[key].trim().toLowerCase();
-      });
-    
-    // const trimmedWorkShift = workShift.map((shift: {day: string, start: string, end: string}) => {
-    //     return {
-    //         day: shift.day.trim().toLowerCase(),
-    //         start: shift.start.trim(),
-    //         end: shift.end.trim()
-    //     }
-    // }) as {day: string, start: string, end: string}[] | undefined;
+    const trimmedWorkShift = workShift.map((shift: {day: string, start: string, end: string}) => {
+        return {
+            day: shift.day.trim().toLowerCase(),
+            start: shift.start.trim(),
+            end: shift.end.trim()
+        }
+    }) as {day: string, start: string, end: string}[] | undefined;
 
-    const validDaysOfWeek = /^(monday|tuesday|wednesday|thursday|friday|saturday|sunday)$/;
-    
+    // console.log(ExpressUtils.isValid(res, trimmedLogin, 'string', 4, 30));
+    // console.log(ExpressUtils.isValid(res, trimmedPassword, 'string', 8));   
+    // console.log(trimmedRole && ExpressUtils.isValid(res, trimmedRole, 'string', 2, 30));     
+    // console.log(ExpressUtils.isValid(res, isDeclaredActive, 'boolean'));   
+    // console.log(trimmedWorkShift && ExpressUtils.isValid(res, trimmedWorkShift, 'array', 1, 7));
+     
 
     if (
         ExpressUtils.isValid(res, trimmedLogin, 'string', 4, 30) && 
@@ -187,18 +185,15 @@ export function validateCreateUser(req: Request, res: Response, next: NextFuncti
         ExpressUtils.isValid(res, isDeclaredActive, 'boolean') &&
 
         // Check if workShift is an array of 3 elements and if each element is valid
-        // trimmedWorkShift && ExpressUtils.isValid(res, trimmedWorkShift, 'array', 1, 7) &&
-        validDaysOfWeek.test(workShift.day) &&
-        ExpressUtils.isValid(res, workShift.start, 'string', 5, 5) &&
-        ExpressUtils.isValid(res, workShift.end, 'string', 5, 5)
-        // trimmedWorkShift.every((shift: {day: string, start: string, end: string}) => {
-        //     const validDaysOfWeek = /^(monday|tuesday|wednesday|thursday|friday|saturday|sunday)$/;
-        //     const isValidDay = validDaysOfWeek.test(shift.day);
+        trimmedWorkShift && ExpressUtils.isValid(res, trimmedWorkShift, 'array', 1, 7) &&
+        trimmedWorkShift.every((shift: {day: string, start: string, end: string}) => {
+            const validDaysOfWeek = /^(monday|tuesday|wednesday|thursday|friday|saturday|sunday)$/;
+            const isValidDay = validDaysOfWeek.test(shift.day);
             
-        //     return isValidDay &&
-        //         ExpressUtils.isValid(res, shift.start, 'string', 5, 5) &&
-        //         ExpressUtils.isValid(res, shift.end, 'string', 5, 5);
-        // })
+            return isValidDay &&
+                ExpressUtils.isValid(res, shift.start, 'string', 5, 5) &&
+                ExpressUtils.isValid(res, shift.end, 'string', 5, 5);
+        })
     ) {
         next();
     } else {
