@@ -170,12 +170,6 @@ export function validateCreateUser(req: Request, res: Response, next: NextFuncti
             end: shift.end.trim()
         }
     }) as {day: string, start: string, end: string}[] | undefined;
-
-    // console.log(ExpressUtils.isValid(res, trimmedLogin, 'string', 4, 30));
-    // console.log(ExpressUtils.isValid(res, trimmedPassword, 'string', 8));   
-    // console.log(trimmedRole && ExpressUtils.isValid(res, trimmedRole, 'string', 2, 30));     
-    // console.log(ExpressUtils.isValid(res, isDeclaredActive, 'boolean'));   
-    // console.log(trimmedWorkShift && ExpressUtils.isValid(res, trimmedWorkShift, 'array', 1, 7));
      
 
     if (

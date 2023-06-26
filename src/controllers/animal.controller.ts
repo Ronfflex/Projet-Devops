@@ -4,6 +4,7 @@ import * as express from "express";
 import { AnimalService, EnclosureService } from "../services";
 import { ExpressUtils } from "../utils";
 import { validateCreateAnimalRequest, validateUpdateAnimalByNameRequest } from "../middlewares";
+import { Animal } from "../models";
 
 export class AnimalController implements ExpressController {
 
@@ -37,7 +38,7 @@ export class AnimalController implements ExpressController {
         const trimmedEnclosure = enclosure.trim().toLowerCase();
 
         const desiredEnclosure = await this.enclosureService.getEnclosureByName(trimmedEnclosure)
-    
+        
         const animal = await this.animalService.createAnimal({
             name: trimmedName,
             description: trimmedDescription,
@@ -46,6 +47,14 @@ export class AnimalController implements ExpressController {
             age,
             enclosure: desiredEnclosure? desiredEnclosure : ""
         });
+
+        if(desiredEnclosure != null && animal != null){
+            const animals = [...desiredEnclosure.animals]
+            animals.push(animal)
+            this.enclosureService.updateEnclosureByName(trimmedEnclosure,{
+                animals:animals as Animal[]
+            })
+        }
     
         animal ? res.json(animal) : ExpressUtils.conflict(res);
     }
@@ -99,6 +108,17 @@ export class AnimalController implements ExpressController {
         updatedAnimal ? res.json(updatedAnimal) : ExpressUtils.notFound(res);
     }
 
+    async moveAnimal(req: Request, res: Response): Promise<void> {
+        const {
+            animal,
+            enclosure
+        } = req.body
+        
+        const updatedAnimal = await this.animalService.moveAnimal(animal.toLowerCase(), enclosure.toLowerCase());
+    
+        updatedAnimal ? res.json(updatedAnimal) : ExpressUtils.notFound(res);
+    }
+
 
     /** [DELETE] **/
     /* Delete animal by name */
@@ -120,6 +140,7 @@ export class AnimalController implements ExpressController {
         router.get('/', this.getAll.bind(this));
         router.get('/id', this.getByName.bind(this));
         router.post('/create', express.json(), validateCreateAnimalRequest, this.create.bind(this));
+        router.patch('/move', express.json(),  this.moveAnimal.bind(this));
         router.patch('/:name', express.json(), validateUpdateAnimalByNameRequest, this.updateByName.bind(this));
         router.delete('/:name', this.deleteByName.bind(this));
         return router;

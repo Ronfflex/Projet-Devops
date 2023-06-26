@@ -32,7 +32,7 @@ export class EnclosureService {
 
     async getAllEnclosures(): Promise<Enclosure[] | null> {
         try {
-            const enclosures = await this.enclosureModel.find();
+            const enclosures = await this.enclosureModel.find().populate('animals');
             return enclosures;
         } catch (error: unknown) {
             return null;
@@ -41,7 +41,7 @@ export class EnclosureService {
 
     async getEnclosureByName(name : string): Promise<Enclosure | null> {
         try {
-            const req = await this.enclosureModel.findOne({ name });
+            const req = await this.enclosureModel.findOne({ name }).populate('animals');
             return req;
         } catch (error: unknown) {
             return null;
@@ -50,7 +50,7 @@ export class EnclosureService {
 
     async updateEnclosureByName(name: string, updateData: Partial<Enclosure>): Promise<Enclosure | null> {
         try {
-            const updatedEnclosure = await this.enclosureModel.findOneAndUpdate({ name }, updateData, { new: true });
+            const updatedEnclosure = await this.enclosureModel.findOneAndUpdate({ name }, updateData, { new: true }).populate('animals');
             return updatedEnclosure;
         } catch (error: unknown) {
             return null;
@@ -59,7 +59,7 @@ export class EnclosureService {
 
     async setMaintenance(name: string, status: boolean): Promise<Enclosure | null> {
         try {
-            const updatedEnclosure = await this.enclosureModel.findOneAndUpdate({ name }, { status }, { new: true });
+            const updatedEnclosure = await this.enclosureModel.findOneAndUpdate({ name }, { status }, { new: true }).populate('animals');
             return updatedEnclosure;
         } catch (error: unknown) {
             return null;
@@ -68,7 +68,7 @@ export class EnclosureService {
 
     async deleteEnclosureByName(name: string): Promise<boolean | null> {
         try{
-            const deletedEnclosure = await this.enclosureModel.findOneAndDelete({ name });
+            const deletedEnclosure = await this.enclosureModel.findOneAndDelete({ name }).populate('animals');
             return deletedEnclosure ? true : false;
         } catch (error: unknown) {
             return null;

@@ -37,6 +37,8 @@ export class EnclosureController implements ExpressController {
         const trimmedImage = image.trim();
         const trimmedType = type.trim().toLowerCase();
         const trimmedOpeningHours = openingHours.trim();
+
+        const animals:string[] = []
     
         const enclosure = await this.enclosureService.createEnclosure({
             name: trimmedName,
@@ -48,7 +50,8 @@ export class EnclosureController implements ExpressController {
             duration,
             status,
             bestMaintenanceMonth,
-            handicapAccessible
+            handicapAccessible,
+            animals
         });
     
         enclosure ? res.json(enclosure) : ExpressUtils.conflict(res);
