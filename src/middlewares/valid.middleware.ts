@@ -50,7 +50,7 @@ export function validateCreateAnimalRequest(req: Request, res: Response, next: N
     const trimmedDescription = description ? description.trim() : undefined;
     const trimmedImage = image ? image.trim() : undefined;
     const trimmedSpecies = species ? species.trim().toLowerCase() : undefined;
-    const trimmedEnclosure = enclosure ? enclosure.trim() : undefined;
+    const trimmedEnclosure = enclosure ? enclosure.trim() : undefined;    
 
     if (
         ExpressUtils.isValid(res, trimmedName, 'string', 2, 50) && 
@@ -121,6 +121,7 @@ export function validateCreateRequest(req: Request, res: Response, next: NextFun
         bestMaintenanceMonth,
         handicapAccessible
     } = req.body;
+    
 
     // Trim and lowercase all string values and check if they are valid
     const trimmedName = name ? name.trim().toLowerCase() : undefined;
@@ -161,14 +162,23 @@ export function validateCreateUser(req: Request, res: Response, next: NextFuncti
     const trimmedLogin = login ? login.trim().toLowerCase() : undefined;
     const trimmedPassword = password ? password.trim() : undefined;
     const trimmedRole = role ? role.trim().toLowerCase() : undefined;
+    
     const isDeclaredActive = active !== undefined ? active : true; // default: true if not declared
-    const trimmedWorkShift = workShift.map((shift: {day: string, start: string, end: string}) => {
-        return {
-            day: shift.day.trim().toLowerCase(),
-            start: shift.start.trim(),
-            end: shift.end.trim()
-        }
-    }) as {day: string, start: string, end: string}[] | undefined;
+    
+    Object.keys(workShift).forEach(function(key, index) {
+        workShift[key].trim().toLowerCase();
+      });
+    
+    // const trimmedWorkShift = workShift.map((shift: {day: string, start: string, end: string}) => {
+    //     return {
+    //         day: shift.day.trim().toLowerCase(),
+    //         start: shift.start.trim(),
+    //         end: shift.end.trim()
+    //     }
+    // }) as {day: string, start: string, end: string}[] | undefined;
+
+    const validDaysOfWeek = /^(monday|tuesday|wednesday|thursday|friday|saturday|sunday)$/;
+    
 
     if (
         ExpressUtils.isValid(res, trimmedLogin, 'string', 4, 30) && 
@@ -177,15 +187,18 @@ export function validateCreateUser(req: Request, res: Response, next: NextFuncti
         ExpressUtils.isValid(res, isDeclaredActive, 'boolean') &&
 
         // Check if workShift is an array of 3 elements and if each element is valid
-        trimmedWorkShift && ExpressUtils.isValid(res, trimmedWorkShift, 'array', 1, 7) &&
-        trimmedWorkShift.every((shift: {day: string, start: string, end: string}) => {
-            const validDaysOfWeek = /^(monday|tuesday|wednesday|thursday|friday|saturday|sunday)$/;
-            const isValidDay = validDaysOfWeek.test(shift.day);
+        // trimmedWorkShift && ExpressUtils.isValid(res, trimmedWorkShift, 'array', 1, 7) &&
+        validDaysOfWeek.test(workShift.day) &&
+        ExpressUtils.isValid(res, workShift.start, 'string', 5, 5) &&
+        ExpressUtils.isValid(res, workShift.end, 'string', 5, 5)
+        // trimmedWorkShift.every((shift: {day: string, start: string, end: string}) => {
+        //     const validDaysOfWeek = /^(monday|tuesday|wednesday|thursday|friday|saturday|sunday)$/;
+        //     const isValidDay = validDaysOfWeek.test(shift.day);
             
-            return isValidDay &&
-                ExpressUtils.isValid(res, shift.start, 'string', 5, 5) &&
-                ExpressUtils.isValid(res, shift.end, 'string', 5, 5);
-        })
+        //     return isValidDay &&
+        //         ExpressUtils.isValid(res, shift.start, 'string', 5, 5) &&
+        //         ExpressUtils.isValid(res, shift.end, 'string', 5, 5);
+        // })
     ) {
         next();
     } else {

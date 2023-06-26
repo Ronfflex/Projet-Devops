@@ -31,13 +31,18 @@ export class UserController implements ExpressController {
         const trimmedLogin = login.trim().toLowerCase();
         const trimmedPassword = password.trim();
         const trimmedRole = role.trim().toLowerCase();
-        const trimmedWorkShift = workShift.map((shift: {day: string, start: string, end: string}) => {
-            return {
-                day: shift.day.trim().toLowerCase(),
-                start: shift.start.trim(),
-                end: shift.end.trim()
-            }
-        }) as {day: string, start: string, end: string}[];
+        // const trimmedWorkShift = workShift.map((shift: {day: string, start: string, end: string}) => {
+        //     return {
+        //         day: shift.day.trim().toLowerCase(),
+        //         start: shift.start.trim(),
+        //         end: shift.end.trim()
+        //     }
+        // }) as {day: string, start: string, end: string}[];
+
+        Object.keys(workShift).forEach(function(key, index) {
+            workShift[key].trim().toLowerCase();
+          });
+        const trimmedWorkShift = workShift
 
         const user = await this.authService.createUser({
             login: trimmedLogin,
