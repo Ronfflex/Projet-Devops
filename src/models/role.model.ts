@@ -2,13 +2,13 @@ import mongoose, { Document, Model, Schema } from "mongoose";
 
 export interface Role extends Document {
   name: string;
-  updatable: boolean;
+  updatable?: boolean;
 }
 
 const roleSchema: Schema = new Schema<Role>(
   {
     name: { type: Schema.Types.String, unique: true, required: true },
-    updatable: { type: Schema.Types.Boolean, required: true, default: true },
+    updatable: { type: Schema.Types.Boolean, required: true, default: true, immutable: true },
   },
   {
     collection: "roles",
