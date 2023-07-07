@@ -55,7 +55,7 @@ export class AuthService {
       // Populate the user field
       const userPopulated = await UserModel.findOne({
         login: user.login,
-      }).populate('role');
+      }).populate("role");
       if (!userPopulated) {
         return null;
       }
@@ -121,6 +121,13 @@ export class AuthService {
   ): Promise<User | null> {
     // Remove _id and login fields if present
     const { _id, login, ...filteredUpdateFields } = updateFields;
+
+    // Hash password if it is present
+    if (filteredUpdateFields.password) {
+      filteredUpdateFields.password = SecurityUtils.toSHA512(
+        filteredUpdateFields.password
+      );
+    }
 
     const updatedEmployee: User | null = await UserModel.findOneAndUpdate(
       { login: userLogin },
