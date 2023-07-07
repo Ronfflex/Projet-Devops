@@ -39,7 +39,7 @@ export class UserController implements ExpressController {
     ) as { day: string; start: string; end: string }[];
 
     // Check if role exists
-    const roleExists = await RoleModel.exists({ name: trimmedRole });
+    const roleExists = await RoleModel.findOne({ name: trimmedRole });
 
     if (!roleExists) {
       return ExpressUtils.conflict(res);
@@ -48,7 +48,7 @@ export class UserController implements ExpressController {
     const user = await this.authService.createUser({
       login: trimmedLogin,
       password: trimmedPassword,
-      role: trimmedRole,
+      role: roleExists._id,
       active,
       workShift: trimmedWorkShift,
     } as User);
@@ -58,7 +58,8 @@ export class UserController implements ExpressController {
 
   /* Login */
   async login(req: Request, res: Response): Promise<void> {
-    const user = await this.authService.findUser({
+    // Check if user exists and password is correct
+    const user = await this.authService.findUserLogin({
       login: req.body.login,
       password: req.body.password,
     });
@@ -67,6 +68,7 @@ export class UserController implements ExpressController {
       return ExpressUtils.unauthorized(res);
     }
 
+    // Start session && populate user role
     const platform = req.headers["user-agent"];
     const session = await this.authService.startSession(user, platform);
 
@@ -113,23 +115,28 @@ export class UserController implements ExpressController {
   /** [PATCH] **/
   /* Update an employee */
   async updateByLogin(req: Request, res: Response): Promise<void> {
-    const trimmedLogin = req.params.login.trim().toLowerCase();
-    const trimmedRole = req.body.role.trim().toLowerCase();
-
+    const { login } = req.params;
     const { password, role, active, workShift } = req.body;
+    const trimmedLogin = login.trim().toLowerCase();
+    const trimmedRole = role.trim().toLowerCase();
 
     // Check if role exists
-    const roleExists = await RoleModel.exists({ name: trimmedRole });
+    const roleExists = await RoleModel.findOne({ name: trimmedRole });
 
     if (!roleExists) {
       return ExpressUtils.conflict(res);
+    }
+
+    // Check if the request is made by an admin or the user himself
+    if (req.user?.role.name !== "admin" && req.user?.login !== trimmedLogin) {
+      return ExpressUtils.unauthorized(res);
     }
 
     const updatedEmployee = await this.authService.updateEmployee(
       trimmedLogin,
       {
         password,
-        role,
+        role: roleExists._id,
         active,
         workShift,
       }

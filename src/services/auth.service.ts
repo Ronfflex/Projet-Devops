@@ -36,7 +36,7 @@ export class AuthService {
     }
   }
 
-  async findUser(credentials: UserCredentials): Promise<User | null> {
+  async findUserLogin(credentials: UserCredentials): Promise<User | null> {
     try {
       const req = await this.userModel
         .findOne({
@@ -52,6 +52,15 @@ export class AuthService {
 
   async startSession(user: User, platform?: string): Promise<Session | null> {
     try {
+      // Populate the user field
+      const userPopulated = await UserModel.findOne({
+        login: user.login,
+      }).populate('role');
+      if (!userPopulated) {
+        return null;
+      }
+
+      // Create a new session
       const session = await this.sessionModel.create({
         platform,
         user: user._id,
@@ -107,23 +116,19 @@ export class AuthService {
   }
 
   async updateEmployee(
-    login: string,
-    updateData: Partial<User>
+    userLogin: string,
+    updateFields: Partial<User>
   ): Promise<User | null> {
-    try {
-      if (updateData.password) {
-        updateData.password = SecurityUtils.toSHA512(updateData.password);
-      }
+    // Remove _id and login fields if present
+    const { _id, login, ...filteredUpdateFields } = updateFields;
 
-      const updatedEmployee = await this.userModel.findOneAndUpdate(
-        { login },
-        updateData,
-        { new: true }
-      );
-      return updatedEmployee;
-    } catch (error: unknown) {
-      return null;
-    }
+    const updatedEmployee: User | null = await UserModel.findOneAndUpdate(
+      { login: userLogin },
+      { $set: filteredUpdateFields },
+      { new: true }
+    ).populate("role");
+
+    return updatedEmployee;
   }
 
   async deleteUserByLogin(login: string): Promise<boolean | null> {

@@ -29,3 +29,12 @@ export function checkAuthToken(): RequestHandler {
         next();
     };
 }
+
+export function checkAdmin(): RequestHandler {
+    return async function(req: Request, res, next) {
+        if(req.user?.role.name !== 'admin') {
+            return ExpressUtils.unauthorized(res);
+        }
+        next();
+    };
+}

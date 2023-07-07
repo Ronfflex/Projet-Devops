@@ -19,11 +19,11 @@ const WorkShiftSchema: Schema = new Schema(
   },
   {
     _id: false,
-  }
+  } 
 );
 
 export interface User extends UserCredentials, Document {
-  role: Role; // Make reference to Role model
+  role: Role['_id']; // Make reference to Role model
   active: boolean;
   workShift: { day: string; start: string; end: string }[];
 }
@@ -32,7 +32,7 @@ const userSchema: Schema = new Schema<User>(
   {
     login: { type: Schema.Types.String, unique: true, required: true },
     password: { type: Schema.Types.String, required: true },
-    role: { type: Schema.Types.String, ref: "Role", required: true }, // Make reference to Role model
+    role: { type: Schema.Types.ObjectId, ref: "Role", required: true }, // Make reference to Role model
     active: { type: Schema.Types.Boolean, required: true, default: true },
     workShift: [WorkShiftSchema],
   },
