@@ -32,7 +32,7 @@ const userSchema: Schema = new Schema<User>(
   {
     login: { type: Schema.Types.String, unique: true, required: true },
     password: { type: Schema.Types.String, required: true },
-    role: { type: Schema.Types.ObjectId, ref: "Role", required: true }, // Make reference to Role model
+    role: { type: Schema.Types.ObjectId, ref: "Role", required: true}, // Make reference to Role model
     active: { type: Schema.Types.Boolean, required: true, default: true },
     workShift: [WorkShiftSchema],
   },

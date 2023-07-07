@@ -3,7 +3,7 @@ import { ExpressUtils } from "../utils";
 import { ExpressController } from "./controller.interface";
 import { RoleService } from "../services";
 import * as express from "express";
-import { checkAuthToken } from "../middlewares";
+import { checkAuthToken, checkUpdatableRole } from "../middlewares";
 
 export class RoleController implements ExpressController {
   readonly path: string;
@@ -22,79 +22,97 @@ export class RoleController implements ExpressController {
     // Trim and lowercase all string values
     const trimmedName = name.trim().toLowerCase();
 
-    if (!name && name.length < 3 && name.length > 20) {
+    if (!name || name.length < 3 || name.length > 20) {
       ExpressUtils.badRequest(res);
       return;
     }
 
     const role = await this.roleService.createRole({
-      name: trimmedName
+      name: trimmedName,
     });
 
     role ? res.json(role) : ExpressUtils.conflict(res);
   }
 
-    /** [GET] **/
-    /* Get all roles */
-    async getAll(req: Request, res: Response): Promise<void> {
-      const roles = await this.roleService.getAllRoles();
-      roles ? res.json(roles) : ExpressUtils.notFound(res);
+  /** [GET] **/
+  /* Get all roles */
+  async getAll(req: Request, res: Response): Promise<void> {
+    const roles = await this.roleService.getAllRoles();
+    roles ? res.json(roles) : ExpressUtils.notFound(res);
+  }
+
+  /* Get role by name */
+  async getByName(req: Request, res: Response): Promise<void> {
+    const { name } = req.params;
+    const trimmedName = name.trim().toLowerCase();
+
+    if (!name || name.length < 3 || name.length > 20) {
+      ExpressUtils.badRequest(res);
+      return;
     }
 
-    /* Get role by name */
-    async getByName(req: Request, res: Response): Promise<void> {
-      const { name } = req.params;
-      const trimmedName = name.trim().toLowerCase();
+    const role = await this.roleService.getRoleByName(trimmedName);
+    role ? res.json(role) : ExpressUtils.notFound(res);
+  }
 
-      if (!name && name.length < 3 && name.length > 20) {
-        ExpressUtils.badRequest(res);
-        return;
-      }
+  /** [PATCH] **/
+  /* Update role by name */
+  async updateByName(req: Request, res: Response): Promise<void> {
+    const { name } = req.params;
+    const { newName } = req.body;
 
-      const role = await this.roleService.getRoleByName(trimmedName);
-      role ? res.json(role) : ExpressUtils.notFound(res);
+    const trimmedName = name.trim().toLowerCase();
+    const trimmedNewName = newName.trim().toLowerCase();
+
+    if (
+      !trimmedNewName ||
+      trimmedNewName.length < 3 ||
+      trimmedNewName.length > 20
+    ) {
+      ExpressUtils.badRequest(res);
+      return;
     }
 
-  //   /** [PUT] **/
-  //   /* Update role by name */
-  //   async updateByName(req: Request, res: Response): Promise<void> {
-  //     const { name } = req.params;
-  //     const { name } = req.body;
+    if (trimmedName === trimmedNewName) {
+      ExpressUtils.badRequest(res);
+      return;
+    }
 
-  //     // Trim and lowercase all string values
-  //     const trimmedName = name.trim().toLowerCase();
+    // In the middleware, checking if role we want to update exists and is updatable
 
-  //     const role = await this.roleService.updateRoleByName(name, {
-  //       name: trimmedName,
-  //     });
+    const role = await this.roleService.updateRoleByName(trimmedName, {
+      name: trimmedNewName,
+    });
 
-  //     role ? res.json(role) : ExpressUtils.notFound(res);
-  //   }
+    /* If role is not found, it doesn't make sense because we already check that in the middleware.
+    So it means another role already has the unique name we wanted to give (conflict). */
+    role ? res.json(role) : ExpressUtils.conflict(res);
+  }
 
-  //   /** [DELETE] **/
-  //   /* Delete role by name */
-  //   async deleteByName(req: Request, res: Response): Promise<void> {
-  //     const { name } = req.params;
-  //     const trimmedName = name.trim().toLowerCase();
-  //     const role = await this.roleService.deleteRoleByName(trimmedName);
-  //     role ? res.json(role) : ExpressUtils.notFound(res);
-  //   }
+  /** [DELETE] **/
+  /* Delete role by name */
+  async deleteByName(req: Request, res: Response): Promise<void> {
+    const { name } = req.params;
+    const trimmedName = name.trim().toLowerCase();
 
-  //   /** [PATCH] **/
-  //   /* Patch role by name */
-  //   async patchByName(req: Request, res: Response): Promise<void> {
-  //     const { name } = req.params;
-  //     const { name } = req.body;
+    if (!name || name.length < 3 || name.length > 20) {
+      ExpressUtils.badRequest(res);
+      return;
+    }
 
-  //     // Trim and lowercase all string values
-  //     const trimmedName = name.trim().toLowerCase();
+    // In the middleware, checking if role we want to delete exists and is updatable
+    const changeRole = await this.roleService.reassignUsers(trimmedName, 'user');
+    if (changeRole === false) {
+      ExpressUtils.notFound(res);
+      return;
+    } else if (changeRole === null) {
+      ExpressUtils.internalServerError(res);
+      return;
+    }
 
-  //     const role = await this.roleService.patchRoleByName(name, {
-  //       name: trimmedName,
-  //     });
-
-  //     role ? res.json(role) : ExpressUtils.notFound(res);
-  //   }
+    const role = await this.roleService.deleteRoleByName(trimmedName);
+    role ? res.json() : ExpressUtils.notFound(res);
+  }
 
   /* Router */
   buildRoutes(): Router {
@@ -102,6 +120,17 @@ export class RoleController implements ExpressController {
     router.post("/create", express.json(), this.create.bind(this));
     router.get("/", this.getAll.bind(this));
     router.get("/:name", this.getByName.bind(this));
+    router.patch(
+      "/:name",
+      express.json(),
+      checkUpdatableRole(this.roleService),
+      this.updateByName.bind(this)
+    );
+    router.delete(
+      "/:name",
+      checkUpdatableRole(this.roleService),
+      this.deleteByName.bind(this)
+    );
     return router;
   }
 }
