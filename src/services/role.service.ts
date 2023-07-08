@@ -13,7 +13,6 @@ export class RoleService {
       const createdRole = await this.roleModel.create({
         name: role.name,
       });
-      console.log(createdRole);
       return createdRole;
     } catch (error: unknown) {
       return null;
