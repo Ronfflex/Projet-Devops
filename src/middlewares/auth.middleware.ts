@@ -26,6 +26,7 @@ export function checkAuthToken(): RequestHandler {
             return ExpressUtils.unauthorized(res);
         }
         req.user = session.user as User;
+        console.log(req.user);
         next();
     };
 }

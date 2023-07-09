@@ -52,14 +52,6 @@ export class AuthService {
 
   async startSession(user: User, platform?: string): Promise<Session | null> {
     try {
-      // Populate the user field
-      const userPopulated = await UserModel.findOne({
-        login: user.login,
-      }).populate("role");
-      if (!userPopulated) {
-        return null;
-      }
-
       // Create a new session
       const session = await this.sessionModel.create({
         platform,
@@ -89,14 +81,14 @@ export class AuthService {
     }
     const session = await this.sessionModel
       .findById(token)
-      .populate("user")
+      .populate("user").populate("user.role")
       .exec();
     return session;
   }
 
   async getAllEmployees(): Promise<User[] | null> {
     try {
-      const employees = await this.userModel.find();
+      const employees = await this.userModel.find().populate("role");
       return employees;
     } catch (error: unknown) {
       return null;
