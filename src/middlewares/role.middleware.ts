@@ -20,7 +20,7 @@ export function checkUpdatableRole(roleService: RoleService): RequestHandler {
     }
     // Check if role we want to update is updatable
     if (roleExists.updatable === false) {
-      ExpressUtils.unauthorized(res);
+      ExpressUtils.forbidden(res);
       return;
     }
     next();

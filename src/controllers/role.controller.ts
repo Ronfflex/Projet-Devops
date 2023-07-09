@@ -3,7 +3,7 @@ import { ExpressUtils } from "../utils";
 import { ExpressController } from "./controller.interface";
 import { RoleService } from "../services";
 import * as express from "express";
-import { checkAuthToken, checkUpdatableRole } from "../middlewares";
+import { checkAuthToken, checkRole, checkUpdatableRole } from "../middlewares";
 
 export class RoleController implements ExpressController {
   readonly path: string;
@@ -117,20 +117,11 @@ export class RoleController implements ExpressController {
   /* Router */
   buildRoutes(): Router {
     const router = express.Router();
-    router.post("/create", express.json(), this.create.bind(this));
-    router.get("/", this.getAll.bind(this));
-    router.get("/:name", this.getByName.bind(this));
-    router.patch(
-      "/:name",
-      express.json(),
-      checkUpdatableRole(this.roleService),
-      this.updateByName.bind(this)
-    );
-    router.delete(
-      "/:name",
-      checkUpdatableRole(this.roleService),
-      this.deleteByName.bind(this)
-    );
+    router.post("/create", express.json(), checkAuthToken(), checkRole(['admin']), this.create.bind(this));
+    router.get("/", checkAuthToken(), this.getAll.bind(this));
+    router.get("/:name", checkAuthToken(), this.getByName.bind(this));
+    router.patch("/:name", express.json(), checkAuthToken(), checkRole(['admin']), checkUpdatableRole(this.roleService), this.updateByName.bind(this));
+    router.delete("/:name", checkUpdatableRole(this.roleService), this.deleteByName.bind(this));
     return router;
   }
 }

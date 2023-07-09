@@ -166,13 +166,13 @@ export class UserController implements ExpressController {
   buildRoutes(): Router {
     const router = express.Router();
     router.get("/me", checkAuthToken(), this.me.bind(this));
-    router.get("/employees", checkAuthToken(), checkRole("admin"), this.employees.bind(this));
+    router.get("/employees", checkAuthToken(), checkRole(['admin']), this.employees.bind(this));
     router.get("/employees/schledule", checkAuthToken(), this.employeesSchedule.bind(this));
     router.post("/subscribe", express.json(), validateCreateUser, this.subscribe.bind(this));
     router.post("/login", express.json(), this.login.bind(this));
     router.post("/logout", checkAuthToken(), this.logout.bind(this));
-    router.patch("/employees/:login", express.json(), checkAuthToken(), checkRoleOrSelf("admin"), validateUpdateUser, this.updateByLogin.bind(this));
-    router.delete("/employees/:login", checkAuthToken(), checkRoleOrSelf("admin"), this.deleteByLogin.bind(this));
+    router.patch("/employees/:login", express.json(), checkAuthToken(), checkRoleOrSelf(['admin']), validateUpdateUser, this.updateByLogin.bind(this));
+    router.delete("/employees/:login", checkAuthToken(), checkRoleOrSelf(['admin']), this.deleteByLogin.bind(this));
     return router;
   }
 }

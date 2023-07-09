@@ -31,20 +31,20 @@ export function checkAuthToken(): RequestHandler {
     };
 }
 
-export function checkRole(role: string): RequestHandler {
+export function checkRole(roles: string[]): RequestHandler {
     return async function(req: Request, res, next) {
         const user = req.user;
         if(user === undefined) {
             return ExpressUtils.unauthorized(res);
         }
-        if(user.role.name !== role) {
+        if(!roles.includes(user.role.name)) {
             return ExpressUtils.forbidden(res);
         }
         next();
     };
 }
 
-export function checkRoleOrSelf(role: string): RequestHandler {
+export function checkRoleOrSelf(roles: string[]): RequestHandler {
     return async function(req: Request, res, next) {
         const user = req.user;
         const userLoginParam = req.params.login.trim().toLowerCase();
@@ -53,7 +53,7 @@ export function checkRoleOrSelf(role: string): RequestHandler {
             return ExpressUtils.unauthorized(res);
         }
 
-        if(user.role.name !== role && user.login !== userLoginParam) {
+        if(!roles.includes(user.role.name) && user.login !== userLoginParam) {
             return ExpressUtils.forbidden(res);
         }
         next();
