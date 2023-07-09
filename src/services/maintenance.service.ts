@@ -1,35 +1,46 @@
-import {appendFile, readFile, mkdir} from "fs/promises";
+import { promises as fs } from "fs";
+import * as path from "path";
 
+interface MaintenanceEntry {
+    date: string;
+    comment: string;
+}
 
 export class MaintenanceService {
-
-    async readMaintenanceByName(enclosure: string): Promise<string | null> {
+    
+    async readMaintenanceByName(enclosure: string): Promise<MaintenanceEntry[] | null> {
         try {
             // Replace all spaces in the enclosure name with underscores
             const enclosureFormatted = enclosure.replace(/\s+/g, '_');
-            const filePath = `src/files/${enclosureFormatted}.txt`;
-            const buf = await readFile(filePath);
-            const str = buf.toString();
-            return str;
+            const filePath = path.resolve(`src/files/${enclosureFormatted}.json`);
+            const data = await fs.readFile(filePath, 'utf-8');
+            const jsonData = JSON.parse(data);
+            return jsonData;
         } catch (err: unknown) {
+            console.error(err);
             return null;
         }
     }
-
-    async modifyMaintenanceByName(enclosure: string, comment: string): Promise<string | null> {
+    
+    async modifyMaintenanceByName(enclosure: string, comment: string, editor: string): Promise<MaintenanceEntry[] | null> {
         const date = new Date().toISOString();
-        const newEntry = `\n\n${date}\n${comment}`;
+        const newEntry = { date, editor , comment };
         // Replace all spaces in the enclosure name with underscores
         const enclosureFormatted = enclosure.replace(/\s+/g, '_');
-        const filePath = `src/files/${enclosureFormatted}.txt`;
+        const filePath = path.resolve(`src/files/${enclosureFormatted}.json`);
+    
         try {
-            await appendFile(filePath, newEntry);
-            const result = await this.readMaintenanceByName(enclosureFormatted);
-            return result;
-        } catch (err) {
+            const data = await this.readMaintenanceByName(enclosure);
+            const jsonData = data ? [...data, newEntry] : [newEntry];
+    
+            await fs.writeFile(filePath, JSON.stringify(jsonData, null, 2), 'utf-8');
+            return jsonData;
+        } catch (err: unknown) {
+            console.error(err);
             return null;
         }
     }
+    
     
 
 }

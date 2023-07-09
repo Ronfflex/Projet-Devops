@@ -3,7 +3,7 @@ import { Request, Response, Router } from "express";
 import * as express from "express";
 import { EnclosureService } from "../services";
 import { ExpressUtils } from "../utils";
-import { validateCreateRequest, validateUpdateByNameRequest } from "../middlewares";
+import { checkAuthToken, checkRole, validateCreateRequest, validateUpdateByNameRequest } from "../middlewares";
 
 export class EnclosureController implements ExpressController {
 
@@ -146,12 +146,12 @@ export class EnclosureController implements ExpressController {
     /* Router */
     buildRoutes(): Router {
         const router = express.Router();
-        router.get('/', this.getAll.bind(this));
-        router.get('/id', this.getByName.bind(this));
-        router.post('/create', express.json(), validateCreateRequest, this.create.bind(this));
-        router.patch('/:name', express.json(), validateUpdateByNameRequest, this.updateByName.bind(this));
-        router.patch('/:name/maintenance', express.json(), this.setMaintenance.bind(this));
-        router.delete('/:name', this.deleteByName.bind(this));
+        router.get('/', checkAuthToken(), this.getAll.bind(this));
+        router.get('/id', checkAuthToken(), this.getByName.bind(this));
+        router.post('/create', express.json(), checkAuthToken(), checkRole(['admin']), validateCreateRequest, this.create.bind(this));
+        router.patch('/:name', express.json(), checkAuthToken(), checkRole(['admin']), validateUpdateByNameRequest, this.updateByName.bind(this));
+        router.patch('/:name/maintenance', express.json(), checkAuthToken(), checkRole(['admin']), this.setMaintenance.bind(this));
+        router.delete('/:name', checkAuthToken(), checkRole(['admin']), this.deleteByName.bind(this));
         return router;
     }
 }

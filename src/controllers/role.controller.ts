@@ -121,7 +121,7 @@ export class RoleController implements ExpressController {
     router.get("/", checkAuthToken(), this.getAll.bind(this));
     router.get("/:name", checkAuthToken(), this.getByName.bind(this));
     router.patch("/:name", express.json(), checkAuthToken(), checkRole(['admin']), checkUpdatableRole(this.roleService), this.updateByName.bind(this));
-    router.delete("/:name", checkUpdatableRole(this.roleService), this.deleteByName.bind(this));
+    router.delete("/:name", checkAuthToken(), checkRole(['admin']), checkUpdatableRole(this.roleService), this.deleteByName.bind(this));
     return router;
   }
 }
