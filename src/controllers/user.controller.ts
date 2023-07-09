@@ -4,9 +4,11 @@ import * as express from "express";
 import { AuthService } from "../services";
 import { ExpressUtils } from "../utils";
 import {
+  checkRole,
   checkAuthToken,
   validateCreateUser,
   validateUpdateUser,
+  checkRoleOrSelf,
 } from "../middlewares";
 import { RoleModel, User } from "../models";
 
@@ -132,6 +134,9 @@ export class UserController implements ExpressController {
       return ExpressUtils.unauthorized(res);
     }
 
+    // Check if the request is made by an admin (to update active status et role)
+    const isAdmin = req.user?.role.name === "admin";
+
     const updatedEmployee = await this.authService.updateEmployee(
       trimmedLogin,
       {
@@ -139,7 +144,8 @@ export class UserController implements ExpressController {
         role: roleExists._id,
         active,
         workShift,
-      }
+      },
+      isAdmin
     );
 
     updatedEmployee ? res.json(updatedEmployee) : ExpressUtils.notFound(res);
@@ -160,32 +166,13 @@ export class UserController implements ExpressController {
   buildRoutes(): Router {
     const router = express.Router();
     router.get("/me", checkAuthToken(), this.me.bind(this));
-    router.get("/employees", checkAuthToken(), this.employees.bind(this));
-    router.get(
-      "/employees/schledule",
-      checkAuthToken(),
-      this.employeesSchedule.bind(this)
-    );
-    router.post(
-      "/subscribe",
-      express.json(),
-      validateCreateUser,
-      this.subscribe.bind(this)
-    );
+    router.get("/employees", checkAuthToken(), checkRole("admin"), this.employees.bind(this));
+    router.get("/employees/schledule", checkAuthToken(), this.employeesSchedule.bind(this));
+    router.post("/subscribe", express.json(), validateCreateUser, this.subscribe.bind(this));
     router.post("/login", express.json(), this.login.bind(this));
     router.post("/logout", checkAuthToken(), this.logout.bind(this));
-    router.patch(
-      "/employees/:login",
-      express.json(),
-      checkAuthToken(),
-      validateUpdateUser,
-      this.updateByLogin.bind(this)
-    );
-    router.delete(
-      "/employees/:login",
-      checkAuthToken(),
-      this.deleteByLogin.bind(this)
-    );
+    router.patch("/employees/:login", express.json(), checkAuthToken(), checkRoleOrSelf("admin"), validateUpdateUser, this.updateByLogin.bind(this));
+    router.delete("/employees/:login", checkAuthToken(), checkRoleOrSelf("admin"), this.deleteByLogin.bind(this));
     return router;
   }
 }

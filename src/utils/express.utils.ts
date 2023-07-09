@@ -95,6 +95,10 @@ export class ExpressUtils {
         res.status(401).end();
     }
 
+    static forbidden(res: Response) {
+        res.status(403).end();
+    }
+
     static notFound(res: Response) {
         res.status(404).end();
     }

@@ -81,7 +81,7 @@ export class AuthService {
     }
     const session = await this.sessionModel
       .findById(token)
-      .populate("user").populate("user.role")
+      .populate({ path: "user", populate: { path: "role", model: "Role" } })
       .exec();
     return session;
   }
@@ -107,10 +107,7 @@ export class AuthService {
     }
   }
 
-  async updateEmployee(
-    userLogin: string,
-    updateFields: Partial<User>
-  ): Promise<User | null> {
+  async updateEmployee(userLogin: string, updateFields: Partial<User>, isAdmin: boolean): Promise<User | null> {
     // Remove _id and login fields if present
     const { _id, login, ...filteredUpdateFields } = updateFields;
 
@@ -119,6 +116,14 @@ export class AuthService {
       filteredUpdateFields.password = SecurityUtils.toSHA512(
         filteredUpdateFields.password
       );
+    }
+
+    // Remove role and active fields if the user is not admin
+    if(!isAdmin && 'role' in filteredUpdateFields) {
+      delete filteredUpdateFields.role;
+    }
+    if(!isAdmin && 'active' in filteredUpdateFields) {
+      delete filteredUpdateFields.active;
     }
 
     const updatedEmployee: User | null = await UserModel.findOneAndUpdate(

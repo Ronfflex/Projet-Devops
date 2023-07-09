@@ -25,16 +25,36 @@ export function checkAuthToken(): RequestHandler {
         if(!session) {
             return ExpressUtils.unauthorized(res);
         }
+        // Store user logged in the request object for later use in the controller
         req.user = session.user as User;
-        console.log(req.user);
         next();
     };
 }
 
-export function checkAdmin(): RequestHandler {
+export function checkRole(role: string): RequestHandler {
     return async function(req: Request, res, next) {
-        if(req.user?.role.name !== 'admin') {
+        const user = req.user;
+        if(user === undefined) {
             return ExpressUtils.unauthorized(res);
+        }
+        if(user.role.name !== role) {
+            return ExpressUtils.forbidden(res);
+        }
+        next();
+    };
+}
+
+export function checkRoleOrSelf(role: string): RequestHandler {
+    return async function(req: Request, res, next) {
+        const user = req.user;
+        const userLoginParam = req.params.login.trim().toLowerCase();
+        
+        if(user === undefined) {
+            return ExpressUtils.unauthorized(res);
+        }
+
+        if(user.role.name !== role && user.login !== userLoginParam) {
+            return ExpressUtils.forbidden(res);
         }
         next();
     };
