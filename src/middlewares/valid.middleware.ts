@@ -9,6 +9,7 @@ export function validateUpdateByNameRequest(
 ): void {
   const name = req.params.name.trim().toLowerCase();
   if (!ExpressUtils.isValid(res, name, "string", 2, 50)) {
+    ExpressUtils.badRequest(res);
     return;
   }
 
@@ -24,32 +25,52 @@ export function validateUpdateByNameRequest(
     handicapAccessible,
   } = req.body;
 
-  // Trim and lowercase all string values and check if they are valid
+  // Trim and lowercase all string values
   const trimmedDescription = description ? description.trim() : undefined;
   const trimmedImage = image ? image.trim() : undefined;
   const trimmedType = type ? type.trim().toLowerCase() : undefined;
   const trimmedOpeningHours = openingHours ? openingHours.trim() : undefined;
 
-  if (
-    (!description ||
-      ExpressUtils.isValid(res, trimmedDescription, "string", 0, 500)) &&
-    (!image || ExpressUtils.isImageUrlOrPath(trimmedImage)) &&
-    (!type || ExpressUtils.isValid(res, trimmedType, "string", 2, 30)) &&
-    (!capacity || ExpressUtils.isValid(res, capacity, "number", 1, 10000)) &&
-    (!openingHours ||
-      ExpressUtils.isValid(res, trimmedOpeningHours, "string", 11, 11)) &&
-    (!duration || ExpressUtils.isValid(res, duration, "number", 0, 1440)) &&
-    (status === undefined || ExpressUtils.isValid(res, status, "boolean")) &&
-    (!bestMaintenanceMonth ||
-      ExpressUtils.isValid(res, bestMaintenanceMonth, "number", 1, 12)) &&
-    (handicapAccessible === undefined ||
-      ExpressUtils.isValid(res, handicapAccessible, "boolean"))
-  ) {
-    next();
-  } else {
+  if (description && !ExpressUtils.isValid(res, trimmedDescription, "string", 0, 500)) {
     ExpressUtils.badRequest(res);
+    return;
   }
+  if (image && !ExpressUtils.isImageUrlOrPath(trimmedImage)) {
+    ExpressUtils.badRequest(res);
+    return;
+  }
+  if (type && !ExpressUtils.isValid(res, trimmedType, "string", 2, 30)) {
+    ExpressUtils.badRequest(res);
+    return;
+  }
+  if (capacity && !ExpressUtils.isValid(res, capacity, "number", 1, 10000)) {
+    ExpressUtils.badRequest(res);
+    return;
+  }
+  if (openingHours && !ExpressUtils.isValid(res, trimmedOpeningHours, "string", 11, 11)) {
+    ExpressUtils.badRequest(res);
+    return;
+  }
+  if (duration && !ExpressUtils.isValid(res, duration, "number", 0, 1440)) {
+    ExpressUtils.badRequest(res);
+    return;
+  }
+  if (status !== undefined && !ExpressUtils.isValid(res, status, "boolean")) {
+    ExpressUtils.badRequest(res);
+    return;
+  }
+  if (bestMaintenanceMonth && !ExpressUtils.isValid(res, bestMaintenanceMonth, "number", 1, 12)) {
+    ExpressUtils.badRequest(res);
+    return;
+  }
+  if (handicapAccessible !== undefined && !ExpressUtils.isValid(res, handicapAccessible, "boolean")) {
+    ExpressUtils.badRequest(res);
+    return;
+  }
+
+  next();
 }
+
 
 export function validateCreateRequest(
   req: Request,
@@ -69,37 +90,59 @@ export function validateCreateRequest(
     handicapAccessible,
   } = req.body;
 
-  // Trim and lowercase all string values and check if they are valid
+  // Trim and lowercase all string values
   const trimmedName = name ? name.trim().toLowerCase() : undefined;
   const trimmedDescription = description ? description.trim() : undefined;
   const trimmedImage = image ? image.trim() : undefined;
   const trimmedType = type ? type.trim().toLowerCase() : undefined;
   const trimmedOpeningHours = openingHours ? openingHours.trim() : undefined;
 
-  if (
-    ExpressUtils.isValid(res, trimmedName, "string", 2, 50) &&
-    ExpressUtils.isValid(res, trimmedDescription, "string", 0, 500) &&
-    ExpressUtils.isImageUrlOrPath(trimmedImage) &&
-    ExpressUtils.isValid(res, trimmedType, "string", 2, 30) &&
-    capacity &&
-    ExpressUtils.isValid(res, capacity, "number", 1, 10000) &&
-    ExpressUtils.isValid(res, trimmedOpeningHours, "string", 11, 11) &&
-    duration &&
-    ExpressUtils.isValid(res, duration, "number", 0, 1440) &&
-    status !== undefined &&
-    ExpressUtils.isValid(res, status, "boolean") &&
-    handicapAccessible !== undefined &&
-    ExpressUtils.isValid(res, handicapAccessible, "boolean") &&
-    (!bestMaintenanceMonth ||
-      ExpressUtils.isValid(res, bestMaintenanceMonth, "number", 1, 12))
-  ) {
-    next();
-  } else {
+  if (!ExpressUtils.isValid(res, trimmedName, "string", 2, 50)) {
     ExpressUtils.badRequest(res);
+    return;
   }
+  if (!ExpressUtils.isValid(res, trimmedDescription, "string", 0, 500)) {
+    ExpressUtils.badRequest(res);
+    return;
+  }
+  if (!ExpressUtils.isImageUrlOrPath(trimmedImage)) {
+    ExpressUtils.badRequest(res);
+    return;
+  }
+  if (!ExpressUtils.isValid(res, trimmedType, "string", 2, 30)) {
+    ExpressUtils.badRequest(res);
+    return;
+  }
+  if (!capacity || !ExpressUtils.isValid(res, capacity, "number", 1, 10000)) {
+    ExpressUtils.badRequest(res);
+    return;
+  }
+  if (!ExpressUtils.isValid(res, trimmedOpeningHours, "string", 11, 11)) {
+    ExpressUtils.badRequest(res);
+    return;
+  }
+  if (!duration || !ExpressUtils.isValid(res, duration, "number", 0, 1440)) {
+    ExpressUtils.badRequest(res);
+    return;
+  }
+  if (status === undefined || !ExpressUtils.isValid(res, status, "boolean")) {
+    ExpressUtils.badRequest(res);
+    return;
+  }
+  if (handicapAccessible === undefined || !ExpressUtils.isValid(res, handicapAccessible, "boolean")) {
+    ExpressUtils.badRequest(res);
+    return;
+  }
+  if (bestMaintenanceMonth && !ExpressUtils.isValid(res, bestMaintenanceMonth, "number", 1, 12)) {
+    ExpressUtils.badRequest(res);
+    return;
+  }
+
+  next();
 }
 
-/* Users */
+
+/* user */
 export function validateCreateUser(
   req: Request,
   res: Response,
@@ -107,11 +150,35 @@ export function validateCreateUser(
 ): void {
   const { login, password, role, active, workShift } = req.body;
 
-  // Trim and lowercase some values and check if they are valid
+  // Trim and lowercase some values
   const trimmedLogin = login ? login.trim().toLowerCase() : undefined;
   const trimmedPassword = password ? password.trim() : undefined;
   const trimmedRole = role ? role.trim().toLowerCase() : undefined;
   const isDeclaredActive = active !== undefined ? active : true; // default: true if not declared
+
+  if (!ExpressUtils.isValid(res, trimmedLogin, "string", 4, 30)) {
+    ExpressUtils.badRequest(res);
+    return;
+  }
+  if (!ExpressUtils.isValid(res, trimmedPassword, "string", 8)) {
+    ExpressUtils.badRequest(res);
+    return;
+  }
+  if (!trimmedRole || !ExpressUtils.isValid(res, trimmedRole, "string", 2, 30)) {
+    ExpressUtils.badRequest(res);
+    return;
+  }
+  if (!ExpressUtils.isValid(res, isDeclaredActive, "boolean")) {
+    ExpressUtils.badRequest(res);
+    return;
+  }
+
+  // Check if workShift is an array of 3 elements and if each element is valid
+  if (!workShift || !ExpressUtils.isValid(res, workShift, "array", 1, 7)) {
+    ExpressUtils.badRequest(res);
+    return;
+  }
+
   const trimmedWorkShift = workShift.map(
     (shift: { day: string; start: string; end: string }) => {
       return {
@@ -120,36 +187,30 @@ export function validateCreateUser(
         end: shift.end.trim(),
       };
     }
-  ) as { day: string; start: string; end: string }[] | undefined;
+  ) as { day: string; start: string; end: string }[];
 
-  if (
-    ExpressUtils.isValid(res, trimmedLogin, "string", 4, 30) &&
-    ExpressUtils.isValid(res, trimmedPassword, "string", 8) &&
-    trimmedRole &&
-    ExpressUtils.isValid(res, trimmedRole, "string", 2, 30) &&
-    ExpressUtils.isValid(res, isDeclaredActive, "boolean") &&
-    // Check if workShift is an array of 3 elements and if each element is valid
-    trimmedWorkShift &&
-    ExpressUtils.isValid(res, trimmedWorkShift, "array", 1, 7) &&
-    trimmedWorkShift.every(
-      (shift: { day: string; start: string; end: string }) => {
-        const validDaysOfWeek =
-          /^(monday|tuesday|wednesday|thursday|friday|saturday|sunday)$/;
-        const isValidDay = validDaysOfWeek.test(shift.day);
+  const isValidShift = trimmedWorkShift.every(
+    (shift: { day: string; start: string; end: string }) => {
+      const validDaysOfWeek =
+        /^(monday|tuesday|wednesday|thursday|friday|saturday|sunday)$/;
+      const isValidDay = validDaysOfWeek.test(shift.day);
 
-        return (
-          isValidDay &&
-          ExpressUtils.isValid(res, shift.start, "string", 5, 5) &&
-          ExpressUtils.isValid(res, shift.end, "string", 5, 5)
-        );
-      }
-    )
-  ) {
-    next();
-  } else {
+      return (
+        isValidDay &&
+        ExpressUtils.isValid(res, shift.start, "string", 5, 5) &&
+        ExpressUtils.isValid(res, shift.end, "string", 5, 5)
+      );
+    }
+  );
+
+  if (!isValidShift) {
     ExpressUtils.badRequest(res);
+    return;
   }
+
+  next();
 }
+
 
 export function validateLoginUser(
   req: Request,
