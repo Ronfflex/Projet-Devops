@@ -13,6 +13,7 @@ import {
   RoleController,
   AnimalController
 } from "./controllers";
+import cors = require("cors");
 
 async function launchAPI(): Promise<void> {
   console.log("Connecting to database...");
@@ -25,6 +26,7 @@ async function launchAPI(): Promise<void> {
   });
 
   const app = express();
+  app.use(cors())
 
   const controllers: ExpressController[] = [
     new EnclosureController(),
