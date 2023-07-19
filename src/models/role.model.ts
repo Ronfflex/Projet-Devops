@@ -7,7 +7,7 @@ export interface Role extends Document {
 
 const roleSchema: Schema = new Schema<Role>(
   {
-    name: { type: Schema.Types.String, unique: true, required: true, default: "user" },
+    name: { type: Schema.Types.String, unique: true, required: true},
     updatable: { type: Schema.Types.Boolean, required: true, default: true, immutable: true },
   },
   {

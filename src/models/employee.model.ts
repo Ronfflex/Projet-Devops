@@ -1,5 +1,5 @@
 import mongoose, { Document, Model, Schema } from "mongoose";
-import { UserCredentials } from "./userCredentials.model";
+import { UserCredentials } from "./employeeCredentials.model";
 import { Role } from "./role.model";
 
 const WorkShiftSchema: Schema = new Schema(

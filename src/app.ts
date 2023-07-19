@@ -11,6 +11,7 @@ import {
   UserController,
   MaintenanceController,
   RoleController,
+  StaffingController,
 } from "./controllers";
 
 async function launchAPI(): Promise<void> {
@@ -30,6 +31,7 @@ async function launchAPI(): Promise<void> {
     new UserController(),
     new MaintenanceController(),
     new RoleController(),
+    new StaffingController(),
   ];
   for (let controller of controllers) {
     const router = controller.buildRoutes();

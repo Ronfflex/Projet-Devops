@@ -1,5 +1,5 @@
 import mongoose, {Model, Schema} from "mongoose";
-import {User} from "./user.model";
+import {User} from "./employee.model";
 
 export interface Session {
     _id?: string;

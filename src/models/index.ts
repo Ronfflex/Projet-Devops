@@ -1,5 +1,5 @@
 export * from "./enclosure.model";
-export * from "./user.model";
-export * from "./userCredentials.model";
+export * from "./employee.model";
+export * from "./employeeCredentials.model";
 export * from "./session.model";
 export * from "./role.model";
