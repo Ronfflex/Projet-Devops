@@ -1,7 +1,7 @@
 import { ExpressController } from "./controller.interface";
 import { Request, Response, Router } from "express";
 import * as express from "express";
-import { AuthService, MaintenanceService, EnclosureService } from "../services";
+import { MaintenanceService, EnclosureService } from "../services";
 import { ExpressUtils } from "../utils";
 import { checkAuthToken } from "../middlewares";
 
@@ -32,7 +32,7 @@ export class MaintenanceController implements ExpressController {
         }
 
         const maintenance = await this.maintenanceService.readMaintenanceByName(name);
-        maintenance ? res.json(maintenance) : ExpressUtils.notFound(res);
+        maintenance ? res.json(maintenance) : ExpressUtils.internalServerError(res);
     }
 
     /** POST **/
@@ -50,16 +50,21 @@ export class MaintenanceController implements ExpressController {
             return;
         }
 
+        if(!req.user){
+            ExpressUtils.unauthorized(res);
+            return;
+        }
+        const userLogin = req.user.login;
         const { comment } = req.body;
-        const maintenance = await this.maintenanceService.modifyMaintenanceByName(name, comment);
-        maintenance ? ExpressUtils.created(res) : ExpressUtils.notFound(res);
+        const maintenance = await this.maintenanceService.modifyMaintenanceByName(name, comment, userLogin);
+        maintenance ? res.json(maintenance) : ExpressUtils.internalServerError(res);
     }
     
     
     buildRoutes(): Router {
         const router = express.Router();
-        router.get('/:name', this.getByName.bind(this));
-        router.post('/:name', express.json(), checkAuthToken, this.modifyByName.bind(this));
+        router.get('/:name', checkAuthToken(), this.getByName.bind(this));
+        router.post('/:name', express.json(), checkAuthToken(), this.modifyByName.bind(this));
         return router;
     }
 }

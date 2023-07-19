@@ -1,0 +1,482 @@
+{
+	"info": {
+		"_postman_id": "8d096dab-bb31-4220-9766-a1df5062430f",
+		"name": "Planodezoo",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "20851719",
+		"_collection_link": "https://dark-rocket-938057.postman.co/workspace/Planodezoo~711c4541-849e-41f8-8881-7c60eb80d32d/collection/20851719-8d096dab-bb31-4220-9766-a1df5062430f?action=share&creator=20851719&source=collection_link"
+	},
+	"item": [
+		{
+			"name": "Enclosures",
+			"item": [
+				{
+					"name": "Files",
+					"item": [
+						{
+							"name": "Add comment",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "6486681ce0d3f1fa53784b9b",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"comment\": \"hjghjgkghjkgjkhghj\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/maintenance/elephant%20habitat",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"maintenance",
+										"elephant%20habitat"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get File",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "6486681ce0d3f1fa53784b9b",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:3000/maintenance/elephant%20habitat",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"maintenance",
+										"elephant%20habitat"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Create enclosure",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"monkey jungle\",\r\n  \"description\": \"Fun-filled enclosure of our energetic monkeys\",\r\n  \"image\": \"https://example.com/monkey-jungle.jpg\",\r\n  \"type\": \"Primate\",\r\n  \"capacity\": 20,\r\n  \"openingHours\": \"10:00-17:00\",\r\n  \"duration\": 180,\r\n  \"status\": true,\r\n  \"handicapAccessible\": true\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/enclosure/create",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"enclosure",
+								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "All enclosures",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/enclosure/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"enclosure",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get enclosure by name",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/enclosure/id?name=monkey%20jungle",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"enclosure",
+								"id"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "elephant%20Habitat",
+									"disabled": true
+								},
+								{
+									"key": "name",
+									"value": "monkey%20jungle"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update ecnlosure by name",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"description\": \"New descriptioqqn\",\r\n    \"image\": \"http://new-url.com/image.jpg\",\r\n    \"type\": \"New type\",\r\n    \"capacity\": 200,\r\n    \"openingHours\": \"08:00-10:00\",\r\n    \"duration\": 60,\r\n    \"status\": true,\r\n    \"bestMaintenanceMonth\": 5,\r\n    \"handicapAccessible\": true\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/enclosure/monkey%20jungle",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"enclosure",
+								"monkey%20jungle"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Switch to maintenance",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"status\": false\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/enclosure/monkey%20jungle/maintenance",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"enclosure",
+								"monkey%20jungle",
+								"maintenance"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete enclosure",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/enclosure/Monkey%20jungle",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"enclosure",
+								"Monkey%20jungle"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Employees",
+			"item": [
+				{
+					"name": "Subscribre",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"login\": \"exampleUserr\",\r\n    \"password\": \"examplePassword123\",\r\n    \"role\": \"user\",\r\n    \"active\": false,\r\n    \"workShift\": [\r\n        {\r\n            \"day\": \"monday\",\r\n            \"start\": \"09:00\",\r\n            \"end\": \"17:00\"\r\n        },\r\n        {\r\n            \"day\": \"tuesday\",\r\n            \"start\": \"09:00\",\r\n            \"end\": \"17:00\"\r\n        },\r\n        {\r\n            \"day\": \"wednesday\",\r\n            \"start\": \"09:00\",\r\n            \"end\": \"17:00\"\r\n        },\r\n        {\r\n            \"day\": \"thursday\",\r\n            \"start\": \"09:00\",\r\n            \"end\": \"17:00\"\r\n        },\r\n        {\r\n            \"day\": \"fridaY\",\r\n            \"start\": \"09:00\",\r\n            \"end\": \"17:00\"\r\n        }\r\n    ]\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/auth/subscribe",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"auth",
+								"subscribe"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"login\": \"admin\",\r\n  \"password\": \"votreMotDePasse\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/auth/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "6483d35e6f677c2da566da0e",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/auth/logout",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"auth",
+								"logout"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "My session",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "6483d35e6f677c2da566da0e",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/auth/me",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"auth",
+								"me"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "All employees",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "6483d35e6f677c2da566da0e",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/auth/employees",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"auth",
+								"employees"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "All employees schledule",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "Update user by login",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "6483d35e6f677c2da566da0e",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"password\": \"password\",\r\n    \"role\": \"admin\",\r\n    \"active\": true\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/auth/employees/adminn",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"auth",
+								"employees",
+								"adminn"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete user by login",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/auth/employees/adminn",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"auth",
+								"employees",
+								"adminn"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
