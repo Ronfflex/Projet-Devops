@@ -47,8 +47,8 @@ export class AnimalService {
     }
 
     async updateAnimalByName(name: string, updateData: Partial<Animal>): Promise<Animal | null> {
-        try {
-            const updatedAnimal = await this.animalModel.findOneAndUpdate({ name }, updateData, { new: true }).populate('enclosure');
+        try {        
+            const updatedAnimal = await this.animalModel.findOneAndUpdate({ name }, updateData,{new:true}).populate('enclosure');
             return updatedAnimal;
         } catch (error: unknown) {
             return null;

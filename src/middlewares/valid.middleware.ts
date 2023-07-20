@@ -20,7 +20,12 @@ export function validateUpdateAnimalByNameRequest(req: Request, res: Response, n
     const trimmedDescription = description ? description.trim() : undefined;
     const trimmedImage = image ? image.trim() : undefined;
     const trimmedSpecies = species ? species.trim().toLowerCase() : undefined;
-    const trimmedEnclosure = enclosure ? enclosure.trim() : undefined;
+    let trimmedEnclosure;
+    if(typeof enclosure == "string"){
+      trimmedEnclosure = enclosure.trim();
+    }else{
+      trimmedEnclosure = enclosure ? enclosure.name.trim() : undefined;
+    }
 
     if (
         (!description || ExpressUtils.isValid(res, trimmedDescription, 'string', 0, 500)) &&
@@ -268,7 +273,7 @@ export function validateUpdateUser(
     ExpressUtils.badRequest(res);
     return;
   }
-
+  
   if (role && !ExpressUtils.isValid(res, trimmedRole, "string", 2, 30)) {
     ExpressUtils.badRequest(res);
     return;
@@ -279,6 +284,8 @@ export function validateUpdateUser(
     return;
   }
 
+  console.log(workShift);
+  
   if (workShift && trimmedWorkShift) {
     if (!ExpressUtils.isValid(res, trimmedWorkShift, "array", 1, 7)) {
       ExpressUtils.badRequest(res);
