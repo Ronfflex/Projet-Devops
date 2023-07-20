@@ -29,7 +29,7 @@ export class EnclosureController implements ExpressController {
             status,
             bestMaintenanceMonth,
             handicapAccessible
-        } = req.body;
+        } = req.body;        
     
         // Trim and lowercase all string values
         const trimmedName = name.trim().toLowerCase();
