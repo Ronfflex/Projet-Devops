@@ -53,10 +53,11 @@ export class AuthService {
   async startSession(user: User, platform?: string): Promise<Session | null> {
     try {
       // Create a new session
-      const session = await this.sessionModel.create({
+      let session = await this.sessionModel.create({
         platform,
         user: user._id,
       });
+      session = await session.populate('user');
       return session;
     } catch (err: unknown) {
       return null;

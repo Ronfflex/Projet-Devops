@@ -11,8 +11,8 @@ import {
   UserController,
   MaintenanceController,
   RoleController,
-  StaffingController,
 } from "./controllers";
+import cors = require("cors");
 
 async function launchAPI(): Promise<void> {
   console.log("Connecting to database...");
@@ -25,13 +25,13 @@ async function launchAPI(): Promise<void> {
   });
 
   const app = express();
+  app.use(cors())
 
   const controllers: ExpressController[] = [
     new EnclosureController(),
     new UserController(),
     new MaintenanceController(),
     new RoleController(),
-    new StaffingController(),
   ];
   for (let controller of controllers) {
     const router = controller.buildRoutes();

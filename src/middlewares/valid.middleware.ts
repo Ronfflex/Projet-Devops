@@ -1,6 +1,71 @@
 import { Request, Response, NextFunction } from "express";
 import { ExpressUtils } from "../utils";
 
+/* Animals */
+export function validateUpdateAnimalByNameRequest(req: Request, res: Response, next: NextFunction): void {
+    const name = req.params.name.trim().toLowerCase();
+    if (!ExpressUtils.isValid(res, name, 'string', 2, 50)) {
+        return;
+    }
+
+    const {
+        description,
+        image,
+        species,
+        age,
+        enclosure
+    } = req.body;
+
+    // Trim and lowercase all string values and check if they are valid
+    const trimmedDescription = description ? description.trim() : undefined;
+    const trimmedImage = image ? image.trim() : undefined;
+    const trimmedSpecies = species ? species.trim().toLowerCase() : undefined;
+    const trimmedEnclosure = enclosure ? enclosure.trim() : undefined;
+
+    if (
+        (!description || ExpressUtils.isValid(res, trimmedDescription, 'string', 0, 500)) &&
+        (!image || ExpressUtils.isImageUrlOrPath(trimmedImage)) &&
+        (!species || ExpressUtils.isValid(res, trimmedSpecies, 'string', 2, 30)) &&
+        (!age || ExpressUtils.isValid(res, age, 'number', 1, 150)) &&
+        (!enclosure || ExpressUtils.isValid(res, trimmedEnclosure, 'string', 2, 50))
+    ) {
+        next();
+    } else {
+        ExpressUtils.badRequest(res);
+    }
+}
+
+export function validateCreateAnimalRequest(req: Request, res: Response, next: NextFunction): void {
+    const {
+        name,
+        description,
+        image,
+        species,
+        age,
+        enclosure
+    } = req.body;
+
+    // Trim and lowercase all string values and check if they are valid
+    const trimmedName = name ? name.trim().toLowerCase() : undefined;
+    const trimmedDescription = description ? description.trim() : undefined;
+    const trimmedImage = image ? image.trim() : undefined;
+    const trimmedSpecies = species ? species.trim().toLowerCase() : undefined;
+    const trimmedEnclosure = enclosure ? enclosure.trim() : undefined;    
+
+    if (
+        ExpressUtils.isValid(res, trimmedName, 'string', 2, 50) && 
+        ExpressUtils.isValid(res, trimmedDescription, 'string', 0, 500) &&
+        ExpressUtils.isImageUrlOrPath(trimmedImage) &&
+        ExpressUtils.isValid(res, trimmedSpecies, 'string', 2, 30) &&
+        age && ExpressUtils.isValid(res, age, 'number', 1, 150) &&
+        ExpressUtils.isValid(res, trimmedEnclosure, 'string', 2, 50)
+    ) {
+        next();
+    } else {
+        ExpressUtils.badRequest(res);
+    }
+}
+
 /* Enclosures */
 export function validateUpdateByNameRequest(
   req: Request,
