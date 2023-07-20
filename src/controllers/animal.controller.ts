@@ -88,7 +88,8 @@ export class AnimalController implements ExpressController {
     /* Update animal by name */
     async updateByName(req: Request, res: Response): Promise<void> {
         const name = req.params.name.trim().toLowerCase();
-    
+        
+        
         const {
             description,
             image,
@@ -96,14 +97,14 @@ export class AnimalController implements ExpressController {
             age,
             enclosure
         } = req.body;
-    
+        
         const updatedAnimal = await this.animalService.updateAnimalByName(name, {
             description,
             image,
             species,
             age,
             enclosure
-        });
+        });        
     
         updatedAnimal ? res.json(updatedAnimal) : ExpressUtils.notFound(res);
     }
