@@ -26,29 +26,13 @@ export class TicketService {
     }
   }
 
-  // async validateTicketAccess(ticketId: string, enclosureId: string): Promise<boolean> {
-  //   try {
-  //     // Find the ticket by id
-  //     const ticket = await TicketModel.findById(ticketId);
-  //     // Find the enclosure by id
-  //     const enclosure = await EnclosureModel.findById(enclosureId);
-  //   } catch (error: unknown) {
-  //     return false;
-  //   }
-
-  //   // If the ticket type is escape game, check the order of access
-  //   if (ticket.type === TicketType.ESCAPE_GAME) {
-  //     if (ticket.escapeGameOrder && ticket.escapeGameOrder.length > 0) {
-  //       const currentOrderIndex = ticket.escapeGameOrder.findIndex(orderEnclosure => orderEnclosure.toString() === enclosure._id);
-  //       if (currentOrderIndex === -1) {
-  //         return false;
-  //       }
-  //     } else {
-  //       return false;
-  //     }
-  //   }
-
-  //   // Check if the enclosure is in the valid enclosures of the ticket
-  //   return ticket.validEnclosures.includes(enclosure._id);
-  // }
+  async getAllTickets(): Promise<Ticket[] | null> {
+    try {
+      const tickets = await this.ticketModel.find();
+      return tickets;
+    } catch (error: unknown) {
+      console.log(error);
+      return null;
+    }
+  }
 }

@@ -56,11 +56,29 @@ export class VisitorController implements ExpressController {
         visitor ? res.json(visitor) : ExpressUtils.conflict(res);
     }
 
+    async accessEnclosure(req: Request, res: Response): Promise<void> {
+        const { visitorId, enclosureId } = req.params;
+
+        if (!ExpressUtils.isValid(res, visitorId, "string", 10, 60)) {
+            ExpressUtils.badRequest(res);
+            return;
+        }
+
+        if (!ExpressUtils.isValid(res, enclosureId, "string", 10, 60)) {
+            ExpressUtils.badRequest(res);
+            return;
+        }
+
+        const canAccess = await this.visitorService.canAccessEnclosure(visitorId, enclosureId);
+
+        canAccess ? res.json({ canAccess }) : ExpressUtils.conflict(res);
+    }
 
 
     buildRoutes(): Router {
         const router = Router();
         router.post("/create", express.json(), checkAuthToken(), checkRole(['admin']), this.create.bind(this));
+        router.get("/access/:visitorId/:enclosureId", this.accessEnclosure.bind(this));
         return router;
     }
 }
