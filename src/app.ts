@@ -14,6 +14,7 @@ import {
   StaffingController,
   TicketController,
   VisitorController,
+  AnimalController,
 } from "./controllers";
 import cors = require("cors");
 
@@ -38,6 +39,7 @@ async function launchAPI(): Promise<void> {
     new StaffingController(),
     new TicketController(),
     new VisitorController(),
+    new AnimalController()
   ];
   for (let controller of controllers) {
     const router = controller.buildRoutes();
