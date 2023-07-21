@@ -11,6 +11,7 @@ import {
   UserController,
   MaintenanceController,
   RoleController,
+  AnimalController,
 } from "./controllers";
 import cors = require("cors");
 
@@ -32,6 +33,7 @@ async function launchAPI(): Promise<void> {
     new UserController(),
     new MaintenanceController(),
     new RoleController(),
+    new AnimalController()
   ];
   for (let controller of controllers) {
     const router = controller.buildRoutes();

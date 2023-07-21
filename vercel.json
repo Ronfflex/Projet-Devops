@@ -1,0 +1,22 @@
+{
+    "version": 2,
+    "builds": [
+      {
+        "src": "dist/app.js",
+        "use": "@vercel/node"
+      }
+    ],
+    "routes": [
+      {
+        "src": "/(.*)",
+        "dest": "dist/app.js"
+      }
+    ],
+    "env": {
+        "MONGO_URI":"mongodb+srv://mattlvsr:<password>@cluster0.8anqwju.mongodb.net/planodezoo",
+        "MONGO_USER":"mattlvsr",
+        "MONGO_PASSWORD":"DhzebAJSDHbvQ1nm",
+        "PORT":"8080"
+    }
+  }
+  
