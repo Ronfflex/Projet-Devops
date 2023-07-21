@@ -3,3 +3,5 @@ export * from './animal.service';
 export * from './auth.service';
 export * from './maintenance.service';
 export * from './role.service';
+export * from './ticket.service';
+export * from './visitor.service';

@@ -5,3 +5,5 @@ export * from './animal.controller';
 export * from './maintenance.controller';
 export * from './role.controller';
 export * from './staffing.controller';
+export * from './ticket.controller';
+export * from './visitor.controller';

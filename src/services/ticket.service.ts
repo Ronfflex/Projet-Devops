@@ -9,18 +9,19 @@ export class TicketService {
     this.ticketModel = TicketModel;
   }
 
-  async createTicket(ticket: { type: TicketType; validEnclosures: string[]; escapeGameOrder?: string[]; firstName: string; lastName: string; validity: Date; }): Promise<Ticket | null> {
+  async createTicket(ticket: { name: string, type: TicketType; validEnclosures: string[]; escapeGameOrder?: string[]; creationDate: Date, validity: Date; }): Promise<Ticket | null> {
     try {
       const createdTicket = await this.ticketModel.create({
+        name: ticket.name,
         type: ticket.type,
         validEnclosures: ticket.validEnclosures,
         escapeGameOrder: ticket.escapeGameOrder,
-        firstName: ticket.firstName,
-        lastName: ticket.lastName,
+        creationDate: ticket.creationDate,
         validity: ticket.validity,
       });
       return createdTicket;
     } catch (error: unknown) {
+      console.log(error);
       return null;
     }
   }

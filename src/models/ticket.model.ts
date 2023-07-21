@@ -9,16 +9,21 @@ export enum TicketType {
 }
 
 export interface Ticket extends Document {
+  name: string;
   type: TicketType;
   validEnclosures: Schema.Types.ObjectId[];
   escapeGameOrder?: Schema.Types.ObjectId[];
-  firstName: string;
-  lastName: string;
+  creationDate: Date;
   validity: Date;
 }
 
 const TicketSchema: Schema = new Schema<Ticket>(
   {
+    name: {
+      type: Schema.Types.String,
+      required: true,
+      unique: true,
+    },
     type: {
       type: Schema.Types.String,
       enum: Object.values(TicketType),
@@ -37,12 +42,8 @@ const TicketSchema: Schema = new Schema<Ticket>(
         ref: 'Enclosure',
       },
     ],
-    firstName: {
-      type: Schema.Types.String,
-      required: true,
-    },
-    lastName: {
-      type: Schema.Types.String,
+    creationDate: {
+      type: Schema.Types.Date,
       required: true,
     },
     validity: {

@@ -11,6 +11,9 @@ import {
   UserController,
   MaintenanceController,
   RoleController,
+  StaffingController,
+  TicketController,
+  VisitorController,
 } from "./controllers";
 import cors = require("cors");
 
@@ -25,13 +28,16 @@ async function launchAPI(): Promise<void> {
   });
 
   const app = express();
-  app.use(cors())
+  app.use(cors());
 
   const controllers: ExpressController[] = [
     new EnclosureController(),
     new UserController(),
     new MaintenanceController(),
     new RoleController(),
+    new StaffingController(),
+    new TicketController(),
+    new VisitorController(),
   ];
   for (let controller of controllers) {
     const router = controller.buildRoutes();

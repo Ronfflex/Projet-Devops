@@ -1,12 +1,22 @@
 import mongoose, { Document, Model, Schema } from "mongoose";
 
 export interface Visitor extends Document {
-  ticketId: Schema.Types.ObjectId; // Reference to the ticket model
-  currentEnclosureId: Schema.Types.ObjectId; // The current Enclosure the visitor is in
+  firstName: string;
+  lastName: string;
+  ticketId: Schema.Types.ObjectId;
+  currentEnclosureId?: Schema.Types.ObjectId;
 }
 
 const VisitorSchema: Schema = new Schema<Visitor>(
   {
+    firstName: {
+      type: Schema.Types.String,
+      required: true,
+    },
+    lastName: {
+      type: Schema.Types.String,
+      required: true,
+    },
     ticketId: {
       type: Schema.Types.ObjectId,
       ref: 'Ticket',
