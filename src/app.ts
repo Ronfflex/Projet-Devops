@@ -18,7 +18,7 @@ import {
 } from "./controllers";
 import cors = require("cors");
 
-async function launchAPI(): Promise<void> {
+export async function launchAPI(): Promise<void> {
   console.log("Connecting to database...");
   await connect(process.env.MONGO_URI as string, {
     auth: {
