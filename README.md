@@ -1,4 +1,24 @@
-# PlanodeZoo
+# Projet Devops
+
+### Branches Principales
++ main: La branche principale contenant le code de production. Toutes les fonctionnalités développées sont finalement fusionnées dans cette branche.
++ staging: Une branche de mise en scène où toutes les fonctionnalités, corrections et mises à jour sont d'abord fusionnées. Une fois testées et approuvées, elles sont fusionnées dans la branche main.
+### Branches de Fonctionnalités
++ feature/<nom_de_la_fonctionnalité>: Pour chaque nouvelle fonctionnalité, créez une branche à partir de staging. Par exemple, feature/new-login-page. Une fois la fonctionnalité terminée et testée, fusionnez-la dans staging.
+### Branches de Correction
++ fix/<nom_du_bug>: Pour les corrections urgentes, créez une branche fix à partir de main. Après correction, fusionnez-la à la fois dans main et staging.
+### Branches de Version
++ release/<version>: Pour préparer une nouvelle version, créez une branche release à partir de staging. Une fois prête, fusionnez-la dans main et staging, et marquez la version dans main.
+### Règles de Protection de Branches
++ main et staging: Ces branches sont protégées. Les modifications directes sont interdites. Les pull requests nécessitent des revues de code et le passage réussi des tests CI avant la fusion.
++ Restrictions: Les pushs directs sur main et staging sont interdits pour garantir que tout le code passe par une revue.
+### Flux de Travail
++ Nouvelle Fonctionnalité: Créez une feature branch à partir de staging, développez et testez. Faites une pull request vers staging pour la revue.
++ Correction: Créez une fix branch à partir de main, corrigez le bug, puis fusionnez dans main et staging.
++ Nouvelle Version: Créez une release branch, finalisez la version, puis fusionnez dans main et staging.
+
+
+## PlanodeZoo
 
 + Gestion des espaces CRUD (nom, description, images, type, capacité, durée, horaires d’ouverture, accès handicapé)  
   
